@@ -2,8 +2,28 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { useState, useEffect, useCallback } from 'react'
-import GuatemalaMap from '@/components/home/GuatemalaMap'
+import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton'
+
+/* Lazy load del mapa — es un componente pesado (22 SVG paths grandes).
+   Solo se carga cuando el usuario baja hasta esa sección. */
+const GuatemalaMap = dynamic(() => import('@/components/home/GuatemalaMap'), {
+  loading: () => (
+    <div className="px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24">
+      <div
+        className="w-full rounded-lg"
+        style={{
+          height: '400px',
+          background: 'linear-gradient(90deg, var(--color-surface) 25%, var(--color-surface-alt) 50%, var(--color-surface) 75%)',
+          backgroundSize: '200% 100%',
+          animation: 'shimmer 1.5s ease-in-out infinite',
+        }}
+      />
+    </div>
+  ),
+  ssr: false,
+})
 
 /* Productos de prueba — se reemplazarán por datos reales de la API */
 const featuredProducts = [
@@ -92,7 +112,8 @@ export default function HomePage() {
             src={img.src}
             alt={img.alt}
             fill
-            priority
+            sizes="100vw"
+            priority={index === 0}
             className="object-cover"
             style={{
               opacity: currentImage === index ? 1 : 0,
@@ -214,10 +235,11 @@ export default function HomePage() {
                 className="relative overflow-hidden mb-4"
                 style={{ borderRadius: 'var(--radius-md)', aspectRatio: '3 / 4' }}
               >
-                <Image
+                <ImageWithSkeleton
                   src={product.image}
                   alt={product.name}
                   fill
+                  sizes="(max-width: 1024px) 50vw, 25vw"
                   className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
                 />
                 {/* Overlay que aparece en hover con botón */}
@@ -421,6 +443,169 @@ export default function HomePage() {
           Hover muestra info del departamento en panel lateral.
           ============================================ */}
       <GuatemalaMap />
+
+      {/* ============================================
+          HISTORIA DE LA MARCA — Sección emocional/confianza.
+          Cuenta el porqué de la tienda, la conexión con las artesanas,
+          y la visión de llevar la ropa típica al mundo.
+          Sin imágenes por ahora — diseño tipográfico + layout asimétrico.
+          ============================================ */}
+      <section className="px-4 sm:px-6 lg:px-10 py-20 sm:py-28 lg:py-32">
+        {/* Contenedor principal con borde sutil */}
+        <div
+          className="relative overflow-hidden"
+          style={{
+            borderRadius: 'var(--radius-xl)',
+            border: '1px solid var(--color-border)',
+            backgroundColor: 'var(--color-surface)',
+          }}
+        >
+          {/* Elemento decorativo — comillas grandes */}
+          <div
+            className="absolute top-6 right-8 sm:top-8 sm:right-12 select-none pointer-events-none"
+            style={{
+              fontSize: 'clamp(120px, 20vw, 280px)',
+              lineHeight: 1,
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-border)',
+            }}
+          >
+            &ldquo;
+          </div>
+
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 p-8 sm:p-12 lg:p-16">
+            {/* Columna izquierda — título y frase principal */}
+            <div className="flex flex-col justify-center">
+              <span
+                className="block text-sm uppercase tracking-widest mb-4"
+                style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+              >
+                Nuestra historia
+              </span>
+              <h2
+                className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6"
+                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+              >
+                Nació de una pregunta simple:
+                <span className="block mt-2" style={{ color: 'var(--color-accent)' }}>
+                  ¿por qué no existe esto?
+                </span>
+              </h2>
+              <p
+                className="text-base sm:text-lg leading-relaxed"
+                style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
+              >
+                Guatemala tiene una de las tradiciones textiles más ricas del mundo.
+                Pero si querías comprar un güipil auténtico, tu única opción era un puesto
+                en el mercado o un perfil de Instagram sin orden ni garantía. Eso tenía
+                que cambiar.
+              </p>
+            </div>
+
+            {/* Columna derecha — historia y valores */}
+            <div className="flex flex-col gap-8">
+              <div>
+                <p
+                  className="text-base leading-relaxed mb-4"
+                  style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
+                >
+                  Creamos este espacio para que la ropa típica guatemalteca se presente
+                  como lo que realmente es: piezas de arte hechas a mano, con semanas de
+                  trabajo en cada una, con historia en cada hilo y tradición en cada color.
+                </p>
+                <p
+                  className="text-base leading-relaxed"
+                  style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
+                >
+                  Trabajamos directamente con artesanas de distintos departamentos del
+                  país. Sin intermediarios. Cada prenda que ves aquí fue tejida a mano
+                  por alguien que domina técnicas transmitidas por generaciones — y que
+                  recibe un pago justo por su trabajo.
+                </p>
+              </div>
+
+              {/* Tres pilares — con línea lateral de acento */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div
+                  className="pl-4"
+                  style={{ borderLeft: '2px solid var(--color-accent-light)' }}
+                >
+                  <p
+                    className="text-sm font-semibold mb-1"
+                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
+                  >
+                    Comercio directo
+                  </p>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    Sin intermediarios entre vos y la artesana que creó la pieza.
+                  </p>
+                </div>
+                <div
+                  className="pl-4"
+                  style={{ borderLeft: '2px solid var(--color-accent-light)' }}
+                >
+                  <p
+                    className="text-sm font-semibold mb-1"
+                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
+                  >
+                    Piezas únicas
+                  </p>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    Cada prenda es irrepetible. Si se vende, podés solicitar una similar.
+                  </p>
+                </div>
+                <div
+                  className="pl-4"
+                  style={{ borderLeft: '2px solid var(--color-accent-light)' }}
+                >
+                  <p
+                    className="text-sm font-semibold mb-1"
+                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
+                  >
+                    Origen trazable
+                  </p>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: 'var(--color-text-muted)' }}
+                  >
+                    Cada pieza muestra el departamento y municipio donde fue creada.
+                  </p>
+                </div>
+              </div>
+
+              {/* Link a la página completa */}
+              <div>
+                <Link
+                  href="/nosotros"
+                  className="inline-block px-6 py-2.5 text-sm font-medium"
+                  style={{
+                    color: 'var(--color-accent)',
+                    borderRadius: '9999px',
+                    border: '1.5px solid var(--color-accent)',
+                    transition: 'background-color 300ms ease, color 300ms ease',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = 'var(--color-accent)'
+                    e.currentTarget.style.color = 'var(--color-text-inverse)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent'
+                    e.currentTarget.style.color = 'var(--color-accent)'
+                  }}
+                >
+                  Conocer más sobre nosotros
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
@@ -438,10 +623,12 @@ function CategoryCard({ cat, heightDesktop }: { cat: { name: string; slug: strin
         className="relative w-full"
         style={{ minHeight: heightDesktop }}
       >
-        <Image
+        <ImageWithSkeleton
           src={cat.image}
           alt={cat.name}
           fill
+          loading="eager"
+          sizes="(max-width: 1024px) 100vw, 50vw"
           className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
         />
         <div

@@ -175,7 +175,7 @@ export default function GuatemalaMap() {
   const [activeDept, setActiveDept] = useState<Department | null>(null)
 
   return (
-    <section className="px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24">
+    <section className="px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24" style={{ overflowAnchor: 'none' }}>
       <div className="mb-10 lg:mb-14">
         <span
           className="block text-sm uppercase tracking-widest mb-2"
@@ -192,39 +192,46 @@ export default function GuatemalaMap() {
       </div>
 
       <div className="flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
-        <div className="w-full lg:w-3/5 max-w-xl lg:max-w-none">
+        {/* Mapa — más grande en mobile con max-w-md */}
+        <div className="w-full lg:w-3/5 max-w-md sm:max-w-lg lg:max-w-none">
           <svg
             viewBox="0 0 563.42 594.59"
             className="w-full h-auto"
             style={{ filter: 'drop-shadow(0 4px 20px rgba(44, 24, 16, 0.08))' }}
           >
-            {departments.map((dept) => (
-              <path
-                key={dept.slug}
-                d={dept.path}
-                onMouseEnter={() => setActiveDept(dept)}
-                className="cursor-pointer"
-                style={{
-                  fill: activeDept?.slug === dept.slug
-                    ? 'var(--color-accent)'
-                    : 'var(--color-surface)',
-                  stroke: activeDept?.slug === dept.slug
-                    ? 'var(--color-accent-hover)'
-                    : 'var(--color-border)',
-                  strokeWidth: activeDept?.slug === dept.slug ? 2 : 0.8,
-                  transition: 'fill 300ms ease, stroke 300ms ease, stroke-width 300ms ease',
-                }}
-              />
-            ))}
+            {departments.map((dept) => {
+              const isActive = activeDept?.slug === dept.slug
+              return (
+                <path
+                  key={dept.slug}
+                  d={dept.path}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    setActiveDept(dept)
+                  }}
+                  className="cursor-pointer"
+                  style={{
+                    fill: isActive
+                      ? 'var(--color-accent)'
+                      : 'var(--color-surface)',
+                    stroke: 'var(--color-text-muted)',
+                    strokeWidth: isActive ? 2 : 1,
+                    transition: 'fill 300ms ease, stroke-width 300ms ease',
+                  }}
+                />
+              )
+            })}
+
           </svg>
         </div>
 
-        <div className="w-full lg:w-2/5 flex flex-col items-start" style={{ minHeight: '220px' }}>
+        {/* Panel de información */}
+        <div className="w-full lg:w-2/5 flex flex-col items-start" style={{ minHeight: '280px' }}>
           {activeDept ? (
             <div
               className="w-full"
-              style={{ animation: 'fadeInUp 300ms ease forwards' }}
               key={activeDept.slug}
+              style={{ animation: 'fadeInUp 300ms ease forwards' }}
             >
               <span
                 className="block text-xs uppercase tracking-widest mb-3"
@@ -233,22 +240,29 @@ export default function GuatemalaMap() {
                 Departamento
               </span>
               <h3
-                className="text-3xl sm:text-4xl font-bold mb-3"
+                className="text-3xl sm:text-4xl font-bold mb-2"
                 style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
               >
                 {activeDept.name}
               </h3>
               <p
-                className="text-sm mb-1"
+                className="text-sm mb-4"
                 style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
               >
                 {activeDept.municipalities} municipios
               </p>
               <p
-                className="text-base leading-relaxed mb-6"
+                className="text-base leading-relaxed mb-3"
                 style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
               >
                 {activeDept.description}
+              </p>
+              <p
+                className="text-sm leading-relaxed mb-6"
+                style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+              >
+                Descubre las prendas típicas que las artesanas de {activeDept.name} tejen
+                a mano, cada una con los patrones y colores que identifican a esta región.
               </p>
               <Link
                 href={"/tienda?department=" + activeDept.slug}
@@ -286,11 +300,18 @@ export default function GuatemalaMap() {
                 Cada región tiene su propia identidad textil
               </h3>
               <p
-                className="text-base leading-relaxed"
+                className="text-base leading-relaxed mb-4"
                 style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
               >
-                Pasá el cursor sobre el mapa para explorar los departamentos
-                de Guatemala y descubrir las prendas de cada región.
+                Guatemala cuenta con 22 departamentos, cada uno con tradiciones
+                textiles únicas que se han transmitido por generaciones. Los patrones,
+                colores y técnicas de tejido varían de región en región.
+              </p>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+              >
+                Hacé click en un departamento del mapa para explorar sus prendas.
               </p>
             </div>
           )}

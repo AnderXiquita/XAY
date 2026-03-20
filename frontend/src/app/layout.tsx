@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import SmoothScroll from '@/components/ui/SmoothScroll'
 import './globals.css'
 
 /* ============================================
@@ -57,6 +58,7 @@ export default function RootLayout({
           color: 'var(--color-text-primary)',
         }}
       >
+        <SmoothScroll />
         <Header />
         <main className="flex-1">{children}</main>
         <Footer />
