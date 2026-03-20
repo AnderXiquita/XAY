@@ -1,0 +1,326 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// GEOGRAFÍA — Departamentos y Municipios de Guatemala
+// ============================================
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  slug String @unique
+
+  municipalities Municipality[]
+  products       Product[]
+
+  @@map("departments")
+}
+
+model Municipality {
+  id            Int        @id @default(autoincrement())
+  name          String
+  slug          String     @unique
+  department_id Int
+  department    Department @relation(fields: [department_id], references: [id])
+
+  products Product[]
+
+  @@map("municipalities")
+}
+
+// ============================================
+// CATÁLOGO — Categorías, Productos, Imágenes
+// ============================================
+
+model Category {
+  id          Int     @id @default(autoincrement())
+  name        String  @unique
+  slug        String  @unique
+  description String?
+  is_active   Boolean @default(true)
+
+  products Product[]
+
+  @@map("categories")
+}
+
+// Los complementos modernos pueden tener proveedor
+model Supplier {
+  id           Int     @id @default(autoincrement())
+  name         String
+  contact_name String?
+  email        String?
+  phone        String?
+  notes        String?
+  is_active    Boolean @default(true)
+
+  products Product[]
+
+  @@map("suppliers")
+}
+
+enum ProductStatus {
+  draft
+  available
+  sold
+  coming_soon
+}
+
+enum EmbroideryType {
+  hand     // a mano
+  machine  // a máquina
+  mixed    // mixto
+}
+
+model Product {
+  id                    String         @id @default(uuid())
+  name                  String
+  slug                  String         @unique
+  description           String?
+  price                 Decimal        @db.Decimal(10, 2)
+  category_id           Int
+  category              Category       @relation(fields: [category_id], references: [id])
+  municipality_id       Int?
+  municipality          Municipality?  @relation(fields: [municipality_id], references: [id])
+  department_id         Int?
+  department            Department?    @relation(fields: [department_id], references: [id])
+  supplier_id           Int?
+  supplier              Supplier?      @relation(fields: [supplier_id], references: [id])
+
+  // Tipo de prenda
+  is_traditional        Boolean        @default(true)
+  status                ProductStatus  @default(draft)
+
+  // Dimensiones y tallas
+  // La ropa típica no sigue tallas estándar: se muestran dimensiones reales en cm
+  width_cm              Decimal?       @db.Decimal(6, 2)
+  length_cm             Decimal?       @db.Decimal(6, 2)
+  size_label            String?
+  size_notes            String?
+
+  // Materiales y técnica
+  fabric_type           String?
+  embroidery_type       EmbroideryType?
+  colors                String[]
+
+  // Visibilidad y features
+  is_featured           Boolean        @default(false)
+  // Permite "solicitar similar" cuando está vendido — true por defecto para prendas típicas
+  allow_similar_request Boolean        @default(true)
+
+  // Stock — solo aplica para complementos modernos (is_traditional = false)
+  quantity              Int            @default(1)
+
+  created_at            DateTime       @default(now())
+  updated_at            DateTime       @updatedAt
+
+  images          ProductImage[]
+  order_items     OrderItem[]
+  cart_items      CartItem[]
+  similar_requests SimilarRequest[]
+
+  @@map("products")
+}
+
+enum ImageType {
+  main
+  detail
+  model
+  flat
+}
+
+model ProductImage {
+  id         String    @id @default(uuid())
+  product_id String
+  product    Product   @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  url        String
+  alt_text   String?
+  position   Int       @default(0)
+  type       ImageType @default(flat)
+
+  @@map("product_images")
+}
+
+// ============================================
+// USUARIOS
+// ============================================
+
+enum UserRole {
+  customer
+  admin
+  vendor
+}
+
+enum AuthProvider {
+  local
+  google
+  apple
+}
+
+model User {
+  id               String       @id @default(uuid())
+  email            String       @unique
+  password_hash    String?
+  name             String
+  phone            String?
+  role             UserRole     @default(customer)
+  auth_provider    AuthProvider  @default(local)
+  auth_provider_id String?
+
+  // Medidas del usuario (para recomendaciones futuras)
+  measurements_cm  Json?
+
+  is_active        Boolean      @default(true)
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
+
+  orders           Order[]
+  cart_items       CartItem[]
+  similar_requests SimilarRequest[]
+
+  @@map("users")
+}
+
+// ============================================
+// ÓRDENES DE COMPRA
+// ============================================
+
+enum OrderStatus {
+  pending_payment
+  payment_review
+  confirmed
+  shipped
+  delivered
+  cancelled
+  refunded
+}
+
+enum PaymentMethod {
+  transfer
+  deposit
+  card
+}
+
+enum PaymentStatus {
+  pending
+  confirmed
+  failed
+  refunded
+}
+
+model Order {
+  id                   String        @id @default(uuid())
+  order_number         String        @unique // Formato: "GT-2025-00142"
+
+  // Usuario registrado o invitado
+  user_id              String?
+  user                 User?         @relation(fields: [user_id], references: [id])
+  guest_name           String?
+  guest_email          String?
+  guest_phone          String?
+
+  // Estado
+  status               OrderStatus   @default(pending_payment)
+
+  // Pago
+  payment_method       PaymentMethod
+  payment_status       PaymentStatus @default(pending)
+  payment_reference    String?
+  payment_confirmed_at DateTime?
+
+  // Montos en quetzales (GTQ)
+  subtotal             Decimal       @db.Decimal(10, 2)
+  shipping_cost        Decimal       @db.Decimal(10, 2) @default(0)
+  total                Decimal       @db.Decimal(10, 2)
+
+  // Envío
+  shipping_address     Json
+  shipping_courier     String?
+  shipping_tracking    String?
+
+  // Notas
+  notes                String?
+  admin_notes          String?
+
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
+
+  items                OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id               String  @id @default(uuid())
+  order_id         String
+  order            Order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product_id       String
+  product          Product @relation(fields: [product_id], references: [id])
+  quantity         Int     @default(1)
+  unit_price       Decimal @db.Decimal(10, 2)
+  subtotal         Decimal @db.Decimal(10, 2)
+
+  // Snapshot del producto al momento de la compra — si el producto cambia después, la orden mantiene lo original
+  product_snapshot Json
+
+  @@map("order_items")
+}
+
+// ============================================
+// CARRITO — Persistido en BD para que no se pierda
+// ============================================
+
+model CartItem {
+  id         String   @id @default(uuid())
+  session_id String?  // Para invitados (cookie)
+  user_id    String?
+  user       User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  product_id String
+  product    Product  @relation(fields: [product_id], references: [id])
+  quantity   Int      @default(1)
+  created_at DateTime @default(now())
+
+  @@map("cart_items")
+}
+
+// ============================================
+// SOLICITUD DE PIEZA SIMILAR
+// ============================================
+
+enum SimilarRequestStatus {
+  pending
+  in_review
+  quoted
+  accepted
+  in_production
+  completed
+  cancelled
+}
+
+model SimilarRequest {
+  id              String               @id @default(uuid())
+  product_id      String
+  product         Product              @relation(fields: [product_id], references: [id])
+  user_id         String?
+  user            User?                @relation(fields: [user_id], references: [id])
+
+  requester_name  String
+  requester_email String
+  requester_phone String?
+  notes           String?
+  measurements_cm Json?
+
+  status          SimilarRequestStatus @default(pending)
+  admin_notes     String?
+
+  created_at      DateTime             @default(now())
+  updated_at      DateTime             @updatedAt
+
+  @@map("similar_requests")
+}

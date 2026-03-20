@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx prisma:*)",
+      "Bash(mv prisma/schema.prisma src/prisma/schema.prisma)",
+      "Bash(rm -rf prisma)",
+      "Bash(rm -f src/prisma/.gitkeep)",
+      "Bash(npx create-next-app@latest frontend --typescript --tailwind --eslint --app --src-dir --no-import-alias --use-npm --no-turbopack)",
+      "Bash(timeout 8 npx tsx src/app.ts)",
+      "Bash(npx next:*)",
+      "Bash(docker compose:*)",
+      "Bash(1:*)",
+      "Bash(docker exec:*)",
+      "Bash(npm run:*)",
+      "Bash(node -e \"try { require\\(''@prisma/client''\\); console.log\\(''OK''\\) } catch\\(e\\) { console.log\\(e.message\\) }\")",
+      "Bash(npm list:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm search:*)",
+      "Bash(node -e \"const { PrismaPg } = require\\(''@prisma/client/runtime/client''\\); console.log\\(typeof PrismaPg\\);\")",
+      "WebSearch",
+      "Bash(PRISMA_USER_CONSENT_FOR_DANGEROUS_AI_ACTION=\"donde ejecuto ese comando?\" npx prisma migrate reset --force)",
+      "Bash(ls -d \"c:\\\\Users\\\\HP\\\\Desktop\\\\aabimael\\\\Dev\\\\Tipical-Store\\\\frontend\\\\.next\\\\cache/\"*/)",
+      "WebFetch(domain:simplemaps.com)",
+      "WebFetch(domain:mapsvg.com)",
+      "Bash(curl -s -L \"https://mapsvg.com/maps/geo-calibrated/guatemala.svg\" -o \"/c/Users/HP/Desktop/aabimael/Dev/Tipical-Store/frontend/public/image/guatemala-map.svg\")"
+    ]
+  }
+}
