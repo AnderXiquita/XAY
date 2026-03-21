@@ -104,7 +104,7 @@ export default function HomePage() {
           Las 3 imágenes se apilan con position absolute.
           Solo la activa tiene opacity 1, las demás 0.
           ============================================ */}
-      <section className="relative overflow-hidden" style={{ minHeight: '75vh' }}>
+      <section className="relative overflow-hidden" style={{ minHeight: '70vh' }}>
         {/* Imágenes apiladas con fade */}
         {heroImages.map((img, index) => (
           <Image
