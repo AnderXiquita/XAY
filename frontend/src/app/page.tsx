@@ -104,7 +104,7 @@ export default function HomePage() {
           Las 3 imágenes se apilan con position absolute.
           Solo la activa tiene opacity 1, las demás 0.
           ============================================ */}
-      <section className="relative overflow-hidden" style={{ minHeight: '70vh' }}>
+      <section className="relative overflow-hidden" style={{ minHeight: '75vh' }}>
         {/* Imágenes apiladas con fade */}
         {heroImages.map((img, index) => (
           <Image
@@ -129,7 +129,7 @@ export default function HomePage() {
         />
 
         {/* Contenido del hero */}
-        <div className="relative z-10 flex items-end px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24" style={{ minHeight: '70vh' }}>
+        <div className="relative z-10 flex items-end px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24" style={{ minHeight: '85vh' }}>
           <div className="max-w-2xl">
             <span
               className="block text-sm sm:text-base uppercase tracking-widest mb-4"
@@ -197,29 +197,24 @@ export default function HomePage() {
           Hover: zoom sutil en imagen + aparece botón "Ver producto".
           ============================================ */}
       <section className="px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24">
-        {/* Encabezado de sección */}
-        <div className="flex items-end justify-between mb-10">
-          <div>
+        {/* Encabezado de sección — centrado con líneas decorativas */}
+        <div className="max-w-4xl mx-auto text-center mb-10">
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
             <span
-              className="block text-sm uppercase tracking-widest mb-2"
+              className="text-xs uppercase tracking-[0.3em]"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
             >
               Selección curada
             </span>
-            <h2
-              className="text-3xl sm:text-4xl font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-            >
-              Piezas destacadas
-            </h2>
+            <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
           </div>
-          <Link
-            href="/tienda"
-            className="hidden sm:inline-block text-sm font-medium animated-underline"
-            style={{ color: 'var(--color-accent)' }}
+          <h2
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
           >
-            Ver toda la colección
-          </Link>
+            Piezas destacadas
+          </h2>
         </div>
 
         {/* Grid de productos */}
@@ -287,14 +282,27 @@ export default function HomePage() {
           ))}
         </div>
 
-        {/* Link mobile */}
-        <div className="sm:hidden mt-8 text-center">
+        {/* Botón centrado abajo del grid */}
+        <div className="mt-10 text-center">
           <Link
             href="/tienda"
-            className="text-sm font-medium animated-underline"
-            style={{ color: 'var(--color-accent)' }}
+            className="inline-block px-8 py-3 text-sm font-medium"
+            style={{
+              color: 'var(--color-accent)',
+              borderRadius: '9999px',
+              border: '1.5px solid var(--color-accent)',
+              transition: 'background-color 300ms ease, color 300ms ease, border-color 300ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-accent)'
+              e.currentTarget.style.color = 'var(--color-text-inverse)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.color = 'var(--color-accent)'
+            }}
           >
-            Ver toda la colección
+            Explorar la tienda
           </Link>
         </div>
       </section>
@@ -398,21 +406,23 @@ export default function HomePage() {
           Crea un ritmo visual asimétrico, no un grid uniforme.
           ============================================ */}
       <section className="px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24">
-        <div className="flex items-end justify-between mb-10">
-          <div>
+        <div className="max-w-4xl mx-auto text-center mb-10">
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
             <span
-              className="block text-sm uppercase tracking-widest mb-2"
+              className="text-xs uppercase tracking-[0.3em]"
               style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
             >
               Explora
             </span>
-            <h2
-              className="text-3xl sm:text-4xl font-bold"
-              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-            >
-              Categorías
-            </h2>
+            <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
           </div>
+          <h2
+            className="text-3xl sm:text-4xl font-bold"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+          >
+            Categorías
+          </h2>
         </div>
 
         <div className="flex flex-col gap-3 sm:gap-4">
@@ -446,164 +456,150 @@ export default function HomePage() {
 
       {/* ============================================
           HISTORIA DE LA MARCA — Sección emocional/confianza.
-          Cuenta el porqué de la tienda, la conexión con las artesanas,
-          y la visión de llevar la ropa típica al mundo.
-          Sin imágenes por ahora — diseño tipográfico + layout asimétrico.
+          Layout editorial: frase grande a la izquierda,
+          texto narrativo a la derecha, pilares abajo.
           ============================================ */}
       <section className="px-4 sm:px-6 lg:px-10 py-20 sm:py-28 lg:py-32">
-        {/* Contenedor principal con borde sutil */}
+        {/* Título centrado con líneas */}
+        <div className="max-w-4xl mx-auto text-center mb-16">
+          <div className="flex items-center justify-center gap-4 mb-8">
+            <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
+            <span
+              className="text-xs uppercase tracking-[0.3em]"
+              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+            >
+              Nuestra historia
+            </span>
+            <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
+          </div>
+          <h2
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight"
+            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
+          >
+            Nació de una pregunta simple:{' '}
+            <span style={{ color: 'var(--color-accent)' }}>¿por qué no existe esto?</span>
+          </h2>
+        </div>
+
+        {/* Dos columnas de texto narrativo */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 max-w-5xl mx-auto mb-16">
+          <p
+            className="text-base sm:text-lg leading-relaxed"
+            style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
+          >
+            Guatemala tiene una de las tradiciones textiles más ricas del mundo.
+            Pero si querías comprar un güipil auténtico, tu única opción era un puesto
+            en el mercado o un perfil de Instagram sin orden ni garantía.
+            Creamos este espacio para que la ropa típica guatemalteca se presente
+            como lo que realmente es: piezas de arte hechas a mano.
+          </p>
+          <p
+            className="text-base sm:text-lg leading-relaxed"
+            style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
+          >
+            Trabajamos directamente con artesanas de distintos departamentos del
+            país. Sin intermediarios. Cada prenda que ves aquí fue tejida a mano
+            por alguien que domina técnicas transmitidas por generaciones — y que
+            recibe un pago justo por su trabajo. Con historia en cada hilo y
+            tradición en cada color.
+          </p>
+        </div>
+
+        {/* Línea separadora */}
         <div
-          className="relative overflow-hidden"
-          style={{
-            borderRadius: 'var(--radius-xl)',
-            border: '1px solid var(--color-border)',
-            backgroundColor: 'var(--color-surface)',
-          }}
-        >
-          {/* Elemento decorativo — comillas grandes */}
-          <div
-            className="absolute top-6 right-8 sm:top-8 sm:right-12 select-none pointer-events-none"
+          className="max-w-5xl mx-auto mb-16"
+          style={{ height: '1px', backgroundColor: 'var(--color-border)' }}
+        />
+
+        {/* Tres pilares — con número grande y texto */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-10 sm:gap-8 max-w-5xl mx-auto mb-16">
+          <div className="text-center sm:text-left">
+            <p
+              className="text-5xl sm:text-6xl font-bold mb-3"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-accent)', opacity: 0.2 }}
+            >
+              01
+            </p>
+            <p
+              className="text-base font-semibold mb-2"
+              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
+            >
+              Comercio directo
+            </p>
+            <p
+              className="text-sm leading-relaxed"
+              style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+            >
+              Sin intermediarios entre vos y la artesana que creó la pieza.
+              Cada compra apoya directamente a quien tejió la prenda.
+            </p>
+          </div>
+          <div className="text-center sm:text-left">
+            <p
+              className="text-5xl sm:text-6xl font-bold mb-3"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-accent)', opacity: 0.2 }}
+            >
+              02
+            </p>
+            <p
+              className="text-base font-semibold mb-2"
+              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
+            >
+              Piezas únicas
+            </p>
+            <p
+              className="text-sm leading-relaxed"
+              style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+            >
+              Cada prenda es irrepetible. Si se vende, podés solicitar una
+              similar hecha a mano especialmente para vos.
+            </p>
+          </div>
+          <div className="text-center sm:text-left">
+            <p
+              className="text-5xl sm:text-6xl font-bold mb-3"
+              style={{ fontFamily: 'var(--font-display)', color: 'var(--color-accent)', opacity: 0.2 }}
+            >
+              03
+            </p>
+            <p
+              className="text-base font-semibold mb-2"
+              style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
+            >
+              Origen trazable
+            </p>
+            <p
+              className="text-sm leading-relaxed"
+              style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+            >
+              Cada pieza muestra el departamento y municipio donde fue creada.
+              Sabés exactamente de dónde viene lo que llevás.
+            </p>
+          </div>
+        </div>
+
+        {/* Botón */}
+        <div className="text-center">
+          <Link
+            href="/nosotros"
+            className="inline-block px-8 py-3 text-sm font-medium"
             style={{
-              fontSize: 'clamp(120px, 20vw, 280px)',
-              lineHeight: 1,
-              fontFamily: 'var(--font-display)',
-              color: 'var(--color-border)',
+              color: 'var(--color-accent)',
+              borderRadius: '9999px',
+              border: '1.5px solid var(--color-accent)',
+              transition: 'background-color 300ms ease, color 300ms ease, border-color 300ms ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-accent)'
+              e.currentTarget.style.color = 'var(--color-text-inverse)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'transparent'
+              e.currentTarget.style.color = 'var(--color-accent)'
             }}
           >
-            &ldquo;
-          </div>
-
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 p-8 sm:p-12 lg:p-16">
-            {/* Columna izquierda — título y frase principal */}
-            <div className="flex flex-col justify-center">
-              <span
-                className="block text-sm uppercase tracking-widest mb-4"
-                style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
-              >
-                Nuestra historia
-              </span>
-              <h2
-                className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-6"
-                style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-              >
-                Nació de una pregunta simple:
-                <span className="block mt-2" style={{ color: 'var(--color-accent)' }}>
-                  ¿por qué no existe esto?
-                </span>
-              </h2>
-              <p
-                className="text-base sm:text-lg leading-relaxed"
-                style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
-              >
-                Guatemala tiene una de las tradiciones textiles más ricas del mundo.
-                Pero si querías comprar un güipil auténtico, tu única opción era un puesto
-                en el mercado o un perfil de Instagram sin orden ni garantía. Eso tenía
-                que cambiar.
-              </p>
-            </div>
-
-            {/* Columna derecha — historia y valores */}
-            <div className="flex flex-col gap-8">
-              <div>
-                <p
-                  className="text-base leading-relaxed mb-4"
-                  style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
-                >
-                  Creamos este espacio para que la ropa típica guatemalteca se presente
-                  como lo que realmente es: piezas de arte hechas a mano, con semanas de
-                  trabajo en cada una, con historia en cada hilo y tradición en cada color.
-                </p>
-                <p
-                  className="text-base leading-relaxed"
-                  style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
-                >
-                  Trabajamos directamente con artesanas de distintos departamentos del
-                  país. Sin intermediarios. Cada prenda que ves aquí fue tejida a mano
-                  por alguien que domina técnicas transmitidas por generaciones — y que
-                  recibe un pago justo por su trabajo.
-                </p>
-              </div>
-
-              {/* Tres pilares — con línea lateral de acento */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div
-                  className="pl-4"
-                  style={{ borderLeft: '2px solid var(--color-accent-light)' }}
-                >
-                  <p
-                    className="text-sm font-semibold mb-1"
-                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
-                  >
-                    Comercio directo
-                  </p>
-                  <p
-                    className="text-xs leading-relaxed"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
-                    Sin intermediarios entre vos y la artesana que creó la pieza.
-                  </p>
-                </div>
-                <div
-                  className="pl-4"
-                  style={{ borderLeft: '2px solid var(--color-accent-light)' }}
-                >
-                  <p
-                    className="text-sm font-semibold mb-1"
-                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
-                  >
-                    Piezas únicas
-                  </p>
-                  <p
-                    className="text-xs leading-relaxed"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
-                    Cada prenda es irrepetible. Si se vende, podés solicitar una similar.
-                  </p>
-                </div>
-                <div
-                  className="pl-4"
-                  style={{ borderLeft: '2px solid var(--color-accent-light)' }}
-                >
-                  <p
-                    className="text-sm font-semibold mb-1"
-                    style={{ color: 'var(--color-text-primary)', fontFamily: 'var(--font-body)' }}
-                  >
-                    Origen trazable
-                  </p>
-                  <p
-                    className="text-xs leading-relaxed"
-                    style={{ color: 'var(--color-text-muted)' }}
-                  >
-                    Cada pieza muestra el departamento y municipio donde fue creada.
-                  </p>
-                </div>
-              </div>
-
-              {/* Link a la página completa */}
-              <div>
-                <Link
-                  href="/nosotros"
-                  className="inline-block px-6 py-2.5 text-sm font-medium"
-                  style={{
-                    color: 'var(--color-accent)',
-                    borderRadius: '9999px',
-                    border: '1.5px solid var(--color-accent)',
-                    transition: 'background-color 300ms ease, color 300ms ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = 'var(--color-accent)'
-                    e.currentTarget.style.color = 'var(--color-text-inverse)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent'
-                    e.currentTarget.style.color = 'var(--color-accent)'
-                  }}
-                >
-                  Conocer más sobre nosotros
-                </Link>
-              </div>
-            </div>
-          </div>
+            Conocer más sobre nosotros
+          </Link>
         </div>
       </section>
     </div>

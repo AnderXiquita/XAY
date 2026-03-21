@@ -176,13 +176,17 @@ export default function GuatemalaMap() {
 
   return (
     <section className="px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24" style={{ overflowAnchor: 'none' }}>
-      <div className="mb-10 lg:mb-14">
-        <span
-          className="block text-sm uppercase tracking-widest mb-2"
-          style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
-        >
-          Origen
-        </span>
+      <div className="max-w-4xl mx-auto text-center mb-10 lg:mb-14">
+        <div className="flex items-center justify-center gap-4 mb-8">
+          <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
+          <span
+            className="text-xs uppercase tracking-[0.3em]"
+            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+          >
+            Origen
+          </span>
+          <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
+        </div>
         <h2
           className="text-3xl sm:text-4xl font-bold"
           style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
@@ -197,7 +201,11 @@ export default function GuatemalaMap() {
           <svg
             viewBox="0 0 563.42 594.59"
             className="w-full h-auto"
-            style={{ filter: 'drop-shadow(0 4px 20px rgba(44, 24, 16, 0.08))' }}
+            tabIndex={-1}
+            style={{
+              filter: 'drop-shadow(0 4px 20px rgba(44, 24, 16, 0.08))',
+              outline: 'none',
+            }}
           >
             {departments.map((dept) => {
               const isActive = activeDept?.slug === dept.slug
@@ -207,9 +215,18 @@ export default function GuatemalaMap() {
                   d={dept.path}
                   onClick={(e) => {
                     e.preventDefault()
+                    e.stopPropagation()
+                    const scrollY = window.scrollY
+                    if (e.currentTarget instanceof SVGElement) {
+                      e.currentTarget.blur()
+                    }
                     setActiveDept(dept)
+                    requestAnimationFrame(() => {
+                      window.scrollTo({ top: scrollY, behavior: 'instant' as ScrollBehavior })
+                    })
                   }}
-                  className="cursor-pointer"
+                  tabIndex={-1}
+                  className="cursor-pointer outline-none"
                   style={{
                     fill: isActive
                       ? 'var(--color-accent)'
@@ -230,8 +247,6 @@ export default function GuatemalaMap() {
           {activeDept ? (
             <div
               className="w-full"
-              key={activeDept.slug}
-              style={{ animation: 'fadeInUp 300ms ease forwards' }}
             >
               <span
                 className="block text-xs uppercase tracking-widest mb-3"
@@ -271,7 +286,7 @@ export default function GuatemalaMap() {
                   color: 'var(--color-accent)',
                   borderRadius: '9999px',
                   border: '1.5px solid var(--color-accent)',
-                  transition: 'background-color 300ms ease, color 300ms ease',
+                  transition: 'background-color 300ms ease, color 300ms ease, border-color 300ms ease',
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = 'var(--color-accent)'
