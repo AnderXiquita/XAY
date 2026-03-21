@@ -25,7 +25,9 @@
       "Bash(ls -d \"c:\\\\Users\\\\HP\\\\Desktop\\\\aabimael\\\\Dev\\\\Tipical-Store\\\\frontend\\\\.next\\\\cache/\"*/)",
       "WebFetch(domain:simplemaps.com)",
       "WebFetch(domain:mapsvg.com)",
-      "Bash(curl -s -L \"https://mapsvg.com/maps/geo-calibrated/guatemala.svg\" -o \"/c/Users/HP/Desktop/aabimael/Dev/Tipical-Store/frontend/public/image/guatemala-map.svg\")"
+      "Bash(curl -s -L \"https://mapsvg.com/maps/geo-calibrated/guatemala.svg\" -o \"/c/Users/HP/Desktop/aabimael/Dev/Tipical-Store/frontend/public/image/guatemala-map.svg\")",
+      "Bash(source ~/.nvm/nvm.sh)",
+      "Bash(nvm use:*)"
     ]
   }
 }
