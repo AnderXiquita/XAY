@@ -24,9 +24,13 @@ El problema que resuelve: la ropa típica guatemalteca (guipiles, cortes, fajas,
 
 Si el modelo funciona en Guatemala, replicarlo en otros países con ropa típica propia (Perú, México, Bolivia, etc.), generando empleo a artesanas locales y permitiendo comprar ropa típica de cualquier país desde cualquier parte del mundo.
 
-### Estado del nombre y marca
+### Nombre y marca
 
-**El nombre de la tienda y el logo aún no están definidos.** No inventes nombres en comentarios, variables, ni textos de UI. Usa siempre el placeholder `[NOMBRE DE LA MARCA]` o la variable de entorno `BRAND_NAME`. Cuando el nombre esté definido, se hará una búsqueda y reemplazo global.
+**Nombre provisional: XAY** — viene de la combinación de los apellidos de los dos fundadores: **X**iquita y **A**jqueja**y**. Ya está aplicado en el Header, Footer, metadata y favicon. Si cambia en el futuro, hacer búsqueda y reemplazo global.
+
+**Favicon:** Círculo café oscuro (#2C1810) con la letra "X" en blanco. Archivo: `frontend/public/favicon.svg`.
+
+**Logo:** Por ahora es texto "XAY" con `Playfair Display`, `font-bold`, `letter-spacing: 0.2em`. No hay logo gráfico todavía.
 
 ---
 
@@ -272,23 +276,26 @@ El panel debe permitir:
 - Tipografía serif elegante para títulos, sans-serif para cuerpo
 
 Lo que se hace diferente:
-- El fondo tendrá patrones inspirados en textiles típicos guatemaltecos (no figuras genéricas)
+- El fondo es blanco puro (#FFFFFF). Se intentaron patrones SVG inspirados en textiles pero no se logró el resultado deseado — se descartaron.
 - La jerarquía geográfica (departamento/municipio) es parte visible de la navegación y los filtros
-- Las páginas de departamentos cuentan la historia cultural, no solo muestran productos
+- Mapa SVG interactivo de los 22 departamentos en la home (ya implementado)
 - Imágenes a pantalla completa para contenido editorial y cultural
 
-### Paleta de colores (variables CSS, fáciles de cambiar)
+### Paleta de colores (variables CSS en `globals.css`)
 ```css
---color-background: #FAF7F2    /* Crema cálido */
---color-surface: #F5EFE6       /* Beige suave */
---color-border: #E8DDD0        /* Borde sutil */
---color-text-primary: #2C1810  /* Café oscuro profundo */
+--color-bg: #FFFFFF             /* Fondo principal — blanco puro (cambiado del beige original) */
+--color-surface: #F5EFE6        /* Beige suave — para secciones alternadas */
+--color-border: #E8DDD0         /* Borde sutil */
+--color-text-primary: #2C1810   /* Café oscuro profundo */
 --color-text-secondary: #6B4C3B /* Café medio */
---color-text-muted: #9C7E6F    /* Café suave */
---color-accent: #8B4513        /* Café tierra (acción principal) */
---color-accent-hover: #6B3410  /* Café oscuro (hover) */
---color-accent-light: #D4956A  /* Terracota claro (detalles) */
+--color-text-muted: #9C7E6F     /* Café suave */
+--color-text-inverse: #FAF7F2   /* Texto claro sobre fondos oscuros */
+--color-accent: #8B4513         /* Café tierra (acción principal) */
+--color-accent-hover: #6B3410   /* Café oscuro (hover) */
+--color-accent-light: #D4956A   /* Terracota claro (detalles) */
 ```
+
+**Nota:** El fondo original era `#FAF7F2` (crema cálido) pero se cambió a `#FFFFFF` (blanco puro) porque el beige se veía demasiado "cafecito" en conjunto.
 
 ### Tipografía
 - **Títulos y display:** `Playfair Display` (serif elegante, evoca artesanía y tradición)
@@ -411,11 +418,121 @@ No asumir nada que no esté documentado en estos archivos o en este CLAUDE.md.
 - No escribir lógica de negocio en los controladores. Los controladores solo reciben, delegan al service, y responden.
 - No eliminar registros físicamente de la base de datos. Todo tiene soft delete o cambio de estado.
 - No usar `<img>` en el frontend. Siempre `<Image>` de Next.js.
-- No inventar el nombre de la marca. Usar `[NOMBRE DE LA MARCA]` como placeholder.
+- No inventar el nombre de la marca. El nombre actual es **XAY**.
 
 ---
 
-## 8. Entorno de Desarrollo
+## 8. Estado Actual del Proyecto — Lo que ya está construido
+
+### Frontend completado
+
+El frontend (Next.js) ya tiene las siguientes páginas y componentes funcionales:
+
+#### Páginas
+
+| Ruta | Archivo | Estado |
+|---|---|---|
+| `/` (Home) | `app/page.tsx` | Completa y pulida (desktop + mobile) |
+| `/about` (Sobre Nosotros) | `app/about/page.tsx` | Completa — diseño editorial tipográfico |
+| `/cultura` | Pendiente | No construida aún |
+| `/tienda` (Catálogo) | Pendiente | No construida — requiere backend primero |
+
+#### Componentes de layout
+
+| Componente | Archivo | Descripción |
+|---|---|---|
+| Header | `components/layout/Header.tsx` | Navegación completa desktop + mobile |
+| Footer | `components/layout/Footer.tsx` | Footer con links y copyright |
+| BottomNav | `components/layout/BottomNav.tsx` | Barra inferior mobile (4 íconos) |
+| GuatemalaMap | `components/home/GuatemalaMap.tsx` | Mapa SVG interactivo de Guatemala |
+| ImageWithSkeleton | `components/ui/ImageWithSkeleton.tsx` | Imagen con shimmer de carga |
+| SmoothScroll | `components/ui/SmoothScroll.tsx` | Scroll suave global con Lenis |
+
+#### Layout global (`app/layout.tsx`)
+- Fuentes: Playfair Display (display) + DM Sans (body) vía `next/font/google`
+- Header arriba, Footer abajo, BottomNav fijo en mobile
+- `pb-16 lg:pb-0` en `<main>` para no tapar contenido con la barra inferior
+- SmoothScroll activo con Lenis
+
+### Home page — Secciones en orden
+
+1. **Hero** — Carrusel de 3 imágenes con fade (10s intervalo), texto alineado a la izquierda, botón "Explorar la tienda" con borde redondeado y animación de fill en hover, puntos indicadores abajo a la derecha. `minHeight: 70vh`.
+2. **Productos destacados** — Título centrado con líneas decorativas, grid 2 cols (mobile) / 4 cols (desktop), cards con imagen, hover zoom + botón "Ver producto", botón "Explorar la tienda" centrado abajo. Datos hardcodeados (4 productos de prueba).
+3. **Editorial** — Sección "Cada pieza cuenta con semanas de trabajo" centrada, dos párrafos sobre el proceso artesanal, tres datos (100%, 2–8 semanas, Única).
+4. **Categorías** — Título centrado con líneas, grid mosaico (fila 2 cols + fila 3 cols + fila 1 col full-width). 6 categorías con imágenes reales. `loading="eager"` para evitar problemas de lazy loading.
+5. **Mapa de Guatemala** — SVG interactivo con paths reales de mapsvg.com (CC0). Click para seleccionar departamento (no hover, para evitar problemas en mobile). Panel de info a la derecha con nombre, municipios, descripción, y botón "Ver prendas". Scroll lock con `requestAnimationFrame` para evitar saltos.
+6. **Nuestra historia** — Título centrado, dos columnas de texto, línea separadora, tres pilares con números grandes (01, 02, 03), botón "Conocer más sobre nosotros".
+
+### Navegación mobile — Decisiones de diseño
+
+**Header mobile:**
+- Hamburguesa a la izquierda, logo "XAY" a la derecha
+- Sin íconos de búsqueda/carrito/cuenta (están en la barra inferior)
+- El botón hamburguesa solo abre el menú, no alterna (la X está dentro del menú)
+
+**Menú hamburguesa (fullscreen, `z-60`):**
+- Cubre toda la pantalla incluyendo el navbar
+- Header: "Menú" + X para cerrar
+- Links grandes centrados: Tienda (con flecha `>` que abre submenú), Cultura Guatemala, Sobre Nosotros
+- Click en "Tienda" → navega a `/tienda`. Click en `>` → abre submenú
+- Animación: slide desde la izquierda (350ms cubic-bezier)
+
+**Submenú de tienda (fullscreen, `z-70`):**
+- Se desliza desde la derecha sobre el menú principal
+- Header: `<` (volver) a la izquierda, `X` (cerrar todo) a la derecha
+- Categorías con títulos pequeños (Ropa Típica, Complementos, Explorar) y links grandes debajo
+- Tipografía: títulos `text-sm uppercase tracking-[0.2em]`, links `text-lg font-light font-body`
+
+**Barra inferior (`BottomNav`, `z-50`):**
+- 4 íconos: Inicio, Buscar, Carrito, Mi cuenta
+- Fijo en la parte inferior, solo visible en mobile (`lg:hidden`)
+- Fondo blanco con backdrop-blur
+- Ícono activo se pinta con color accent
+- Badge numérico en carrito (cuando tenga items)
+
+### Patrones de diseño establecidos
+
+**Títulos de sección:** Centrados con líneas decorativas horizontales:
+```
+── ETIQUETA ──
+Título Grande
+```
+
+**Botones:** Borde redondeado (`border-radius: 9999px`), solo borde sin fill, animación de fill en hover (`background-color 300ms, color 300ms, border-color 300ms`).
+
+**Scrollbar:** Personalizado — 6px de ancho, colores que combinan con la paleta.
+
+**Imágenes con skeleton:** Componente `ImageWithSkeleton` que muestra shimmer animado mientras carga la imagen. No interfiere con los estilos del `<Image>` original (no usa z-index ni opacity override).
+
+**Smooth scroll:** Implementado con la librería Lenis (`@studio-freight/lenis`).
+
+### Imágenes actuales (en `frontend/public/image/`)
+
+- Hero: `1.jpg`, `6.jpg`, `Perajes.jpg` (carrusel)
+- Productos destacados: `Destacadas 1.jpg` a `Destacadas 4.jpg`
+- Categorías: `Guipiles.jpeg`, `Cortes.jpg`, `Fajas.jpeg`, `Souvenirs.jpeg`, `Complementos.jpeg`, `Perajes.jpg`
+- Mapa: `guatemala-map.svg` (CC0 de mapsvg.com)
+- Favicon: `favicon.svg`
+
+**Importante sobre imágenes:** Next.js cachea imágenes optimizadas en `.next/cache/`. Si se reemplazan imágenes con el mismo nombre, hay que eliminar la carpeta `.next` y reiniciar el dev server (`rm -rf .next && npm run dev`).
+
+### Lo que falta construir (en orden sugerido)
+
+1. **Página Cultura Guatemala** (`/cultura`) — sección editorial/educativa
+2. **Backend completo** — Prisma schema, migraciones, seed, API REST
+3. **Página de catálogo** (`/tienda`) — grid de productos con filtros, conectada a la API
+4. **Página de detalle de producto** — galería de fotos, info completa, botón agregar al carrito
+5. **Carrito de compras** — persistido en BD, drawer en desktop, página completa en mobile
+6. **Checkout y órdenes** — flujo de pago por transferencia
+7. **Autenticación** — login/registro local + OAuth (Google, Apple)
+8. **Panel de administrador** — CRUD de productos, gestión de órdenes, subida de imágenes
+9. **Sistema de solicitud de pieza similar**
+10. **Favoritos**
+11. **Optimización, SEO, performance**
+
+---
+
+## 9. Entorno de Desarrollo
 
 ### Node.js
 - Versión requerida: **Node 20** (usar nvm para cambiar de versión)
@@ -494,7 +611,7 @@ docker compose down -v
 
 ---
 
-## 9. Variables de Entorno Necesarias
+## 10. Variables de Entorno Necesarias
 
 ```env
 # Base de datos (Docker local)
@@ -524,13 +641,13 @@ CLOUDINARY_API_SECRET=
 
 # App
 NEXT_PUBLIC_API_URL=http://localhost:3001
-BRAND_NAME=[NOMBRE DE LA MARCA]
+BRAND_NAME=XAY
 NODE_ENV=development
 ```
 
 ---
 
-## 10. Lo que viene después del MVP (no construir ahora, solo tener en mente)
+## 11. Lo que viene después del MVP (no construir ahora, solo tener en mente)
 
 - **Configurador de prendas personalizado:** El usuario diseña su guipil eligiendo tela, colores, flores, bordado, tipo de cuello, y lo manda a hacer. Requiere un editor visual (posiblemente Canvas o Three.js para el render 3D), integración con el equipo de producción, y un flujo de cotización. La arquitectura del backend debe anticipar que un `Order` puede contener ítems de tipo "personalizado" además de productos del catálogo.
 - **Medidas del usuario para recomendaciones:** El sistema usa las medidas guardadas para sugerir prendas que podrían quedarle bien.
