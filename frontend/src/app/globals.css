@@ -147,6 +147,35 @@ body {
   }
 }
 
+@keyframes floatDown {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   BOTÓN CTA — About page (sección oscura)
+   Se usa CSS puro porque la página es Server Component.
+   ============================================ */
+
+.about-cta-button {
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-text-inverse);
+  color: var(--color-text-inverse);
+  background-color: transparent;
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
+}
+
+.about-cta-button:hover {
+  background-color: var(--color-text-inverse);
+  color: var(--color-text-primary);
+}
+
 /* ============================================
    SCROLLBAR personalizada
    ============================================ */
