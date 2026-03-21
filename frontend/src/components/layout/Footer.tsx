@@ -18,7 +18,7 @@ export default function Footer() {
               className="text-lg font-bold mb-4"
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
             >
-              [NOMBRE DE LA MARCA]
+              XAY
             </h3>
             <p
               className="text-sm leading-relaxed"
@@ -81,7 +81,7 @@ export default function Footer() {
             color: 'var(--color-text-muted)',
           }}
         >
-          © {new Date().getFullYear()} [NOMBRE DE LA MARCA]. Todos los derechos reservados.
+          © {new Date().getFullYear()} XAY. Todos los derechos reservados.
         </div>
       </div>
     </footer>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 40">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700');
+  </style>
+  <text
+    x="70"
+    y="32"
+    text-anchor="middle"
+    font-family="'Playfair Display', Georgia, serif"
+    font-size="36"
+    font-weight="700"
+    letter-spacing="10"
+    fill="#2C1810"
+  >XAY</text>
+</svg>

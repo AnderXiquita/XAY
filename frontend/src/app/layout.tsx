@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import BottomNav from '@/components/layout/BottomNav'
 import SmoothScroll from '@/components/ui/SmoothScroll'
 import './globals.css'
 
@@ -30,11 +31,14 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: '[NOMBRE DE LA MARCA] — Ropa Típica Guatemalteca',
-    template: '%s | [NOMBRE DE LA MARCA]',
+    default: 'XAY — Ropa Típica Guatemalteca',
+    template: '%s | XAY',
   },
   description:
     'Tienda en línea de ropa típica guatemalteca. Güipiles, cortes, fajas y perrajes de los 22 departamentos de Guatemala.',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 /* ============================================
@@ -60,8 +64,9 @@ export default function RootLayout({
       >
         <SmoothScroll />
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 pb-16 lg:pb-0">{children}</main>
         <Footer />
+        <BottomNav />
       </body>
     </html>
   )

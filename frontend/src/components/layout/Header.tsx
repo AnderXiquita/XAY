@@ -5,165 +5,364 @@ import { useState, useRef, useEffect } from 'react'
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  // Cuando se abre la búsqueda, enfocar el input automáticamente
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus()
     }
   }, [isSearchOpen])
 
+  useEffect(() => {
+    function handleResize() {
+      if (window.innerWidth >= 1024) {
+        setIsMenuOpen(false)
+        setIsSubmenuOpen(false)
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => { document.body.style.overflow = '' }
+  }, [isMenuOpen])
+
+  function closeAll() {
+    setIsSubmenuOpen(false)
+    // Pequeño delay para que el submenú se cierre primero visualmente
+    setTimeout(() => setIsMenuOpen(false), 50)
+  }
+
+  function closeMenu() {
+    setIsMenuOpen(false)
+    // Dejar que la animación del menú principal termine antes de resetear submenú
+    setTimeout(() => setIsSubmenuOpen(false), 300)
+  }
+
+  function closeSubmenu() {
+    setIsSubmenuOpen(false)
+  }
+
   return (
-    <header
-      className="sticky top-0 z-50 backdrop-blur-sm border-b"
-      style={{
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        borderColor: 'var(--color-border)',
-      }}
-    >
-      <div className="px-4 sm:px-6 lg:px-10">
-        <div className="flex items-center justify-between h-16 lg:h-20">
+    <>
+      <header
+        className="sticky top-0 z-50 backdrop-blur-sm border-b"
+        style={{
+          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+          borderColor: 'var(--color-border)',
+        }}
+      >
+        <div className="px-4 sm:px-6 lg:px-10">
+          <div className="flex items-center justify-between h-16 lg:h-20">
 
-          {/* Logo / Nombre de la marca */}
-          <Link
-            href="/"
-            className="text-xl lg:text-2xl font-bold"
-            style={{
-              fontFamily: 'var(--font-display)',
-              color: 'var(--color-text-primary)',
-            }}
-          >
-            [NOMBRE DE LA MARCA]
-          </Link>
+            {/* Mobile: hamburguesa a la izquierda — solo abre, no cambia a X */}
+            <button
+              className="lg:hidden p-2 cursor-pointer"
+              onClick={() => setIsMenuOpen(true)}
+              aria-label="Abrir menú"
+              style={{ minWidth: '44px', minHeight: '44px' }}
+            >
+              <MenuIcon />
+            </button>
 
-          {/* Navegación desktop */}
-          <nav className="hidden lg:flex items-center gap-8">
-            <DropdownLink label="Tienda" />
-            <NavLink href="/cultura">Cultura Guatemala</NavLink>
-            <NavLink href="/about">Sobre Nosotros</NavLink>
-          </nav>
+            {/* Desktop: Logo a la izquierda */}
+            <Link
+              href="/"
+              className="text-2xl font-bold hidden lg:block"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: 'var(--color-text-primary)',
+                letterSpacing: '0.2em',
+              }}
+            >
+              XAY
+            </Link>
 
-          {/* Iconos de acción (desktop) */}
-          <div className="hidden lg:flex items-center gap-1">
+            {/* Navegación desktop */}
+            <nav className="hidden lg:flex items-center gap-8">
+              <DropdownLink label="Tienda" />
+              <NavLink href="/cultura">Cultura Guatemala</NavLink>
+              <NavLink href="/about">Sobre Nosotros</NavLink>
+            </nav>
 
-            {/* Búsqueda animada: icono se convierte en input */}
-            <div className="relative flex items-center">
-              <div
-                className="flex items-center overflow-hidden transition-all"
-                style={{
-                  width: isSearchOpen ? '240px' : '44px',
-                  height: '44px',
-                  borderRadius: '9999px',
-                  border: isSearchOpen ? '1px solid var(--color-border)' : '1px solid transparent',
-                  backgroundColor: 'transparent',
-                  transitionDuration: '300ms',
-                  transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
-                }}
-              >
-                <button
-                  aria-label="Buscar"
-                  className="flex items-center justify-center shrink-0 cursor-pointer transition-colors"
+            {/* Iconos desktop */}
+            <div className="hidden lg:flex items-center gap-1">
+              <div className="relative flex items-center">
+                <div
+                  className="flex items-center overflow-hidden transition-all"
                   style={{
-                    width: '44px',
+                    width: isSearchOpen ? '240px' : '44px',
                     height: '44px',
-                    color: 'var(--color-text-secondary)',
-                  }}
-                  onClick={() => setIsSearchOpen(!isSearchOpen)}
-                  onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-                  onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
-                >
-                  <SearchIcon />
-                </button>
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  placeholder="Buscar..."
-                  className="w-full h-full pr-3 text-sm outline-none"
-                  style={{
+                    borderRadius: '9999px',
+                    border: isSearchOpen ? '1px solid var(--color-border)' : '1px solid transparent',
                     backgroundColor: 'transparent',
-                    color: 'var(--color-text-primary)',
+                    transitionDuration: '300ms',
+                    transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                >
+                  <button
+                    aria-label="Buscar"
+                    className="flex items-center justify-center shrink-0 cursor-pointer transition-colors"
+                    style={{ width: '44px', height: '44px', color: 'var(--color-text-secondary)' }}
+                    onClick={() => setIsSearchOpen(!isSearchOpen)}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+                  >
+                    <SearchIcon />
+                  </button>
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    placeholder="Buscar..."
+                    className="w-full h-full pr-3 text-sm outline-none"
+                    style={{
+                      backgroundColor: 'transparent',
+                      color: 'var(--color-text-primary)',
+                      fontFamily: 'var(--font-body)',
+                      opacity: isSearchOpen ? 1 : 0,
+                      transition: 'opacity 200ms ease',
+                    }}
+                    onBlur={() => setIsSearchOpen(false)}
+                    onKeyDown={(e) => { if (e.key === 'Escape') setIsSearchOpen(false) }}
+                  />
+                </div>
+              </div>
+              <IconButton label="Mi cuenta">
+                <UserIcon />
+              </IconButton>
+              <div className="relative">
+                <IconButton label="Carrito">
+                  <CartIcon />
+                </IconButton>
+                <span
+                  className="absolute top-0 right-0 flex items-center justify-center text-xs font-semibold rounded-full pointer-events-none"
+                  style={{
+                    width: '18px',
+                    height: '18px',
+                    backgroundColor: 'var(--color-accent)',
+                    color: 'var(--color-text-inverse)',
                     fontFamily: 'var(--font-body)',
-                    opacity: isSearchOpen ? 1 : 0,
-                    transition: 'opacity 200ms ease',
+                    fontSize: '11px',
                   }}
-                  onBlur={() => setIsSearchOpen(false)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Escape') setIsSearchOpen(false)
-                  }}
-                />
+                >
+                  0
+                </span>
               </div>
             </div>
 
-            <IconButton label="Mi cuenta">
-              <UserIcon />
-            </IconButton>
-            <div className="relative">
-              <IconButton label="Carrito">
-                <CartIcon />
-              </IconButton>
-              <span
-                className="absolute top-0 right-0 flex items-center justify-center text-xs font-semibold rounded-full pointer-events-none"
-                style={{
-                  width: '18px',
-                  height: '18px',
-                  backgroundColor: 'var(--color-accent)',
-                  color: 'var(--color-text-inverse)',
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '11px',
-                }}
-              >
-                0
-              </span>
-            </div>
+            {/* Mobile: Logo a la derecha */}
+            <Link
+              href="/"
+              className="text-xl font-bold lg:hidden"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: 'var(--color-text-primary)',
+                letterSpacing: '0.2em',
+              }}
+            >
+              XAY
+            </Link>
           </div>
+        </div>
+      </header>
 
-          {/* Botón hamburguesa (mobile) */}
+      {/* ============================================
+          MENÚ MOBILE — Panel principal (fullscreen)
+          ============================================ */}
+      <div
+        className="lg:hidden fixed inset-0 z-[60] flex flex-col"
+        style={{
+          backgroundColor: 'var(--color-bg)',
+          transform: isMenuOpen ? 'translateX(0)' : 'translateX(-100%)',
+          transition: 'transform 350ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
+        {/* Header del menú */}
+        <div
+          className="flex items-center justify-between px-6 border-b shrink-0"
+          style={{ height: '64px', borderColor: 'var(--color-border)' }}
+        >
+          <span
+            className="text-xs uppercase tracking-[0.2em]"
+            style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
+          >
+            Menú
+          </span>
           <button
-            className="lg:hidden p-2 cursor-pointer"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Abrir menú"
+            className="p-2 cursor-pointer"
+            onClick={closeMenu}
+            aria-label="Cerrar menú"
             style={{ minWidth: '44px', minHeight: '44px' }}
           >
-            {isMenuOpen ? <CloseIcon /> : <MenuIcon />}
+            <CloseIcon />
           </button>
         </div>
+
+        {/* Links principales */}
+        <nav className="flex-1 flex flex-col justify-center px-8 gap-3 pb-20">
+          {/* Tienda — texto a la izquierda, flecha a la derecha */}
+          <div
+            className="flex items-center justify-between"
+            style={{ minHeight: '52px' }}
+          >
+            <Link
+              href="/tienda"
+              onClick={closeAll}
+              className="text-2xl font-medium"
+              style={{
+                fontFamily: 'var(--font-display)',
+                color: 'var(--color-text-primary)',
+              }}
+            >
+              Tienda
+            </Link>
+            <button
+              className="p-3 cursor-pointer"
+              onClick={() => setIsSubmenuOpen(true)}
+              aria-label="Ver categorías de tienda"
+              style={{
+                minWidth: '44px',
+                minHeight: '44px',
+                color: 'var(--color-text-muted)',
+              }}
+            >
+              <ChevronRightIcon />
+            </button>
+          </div>
+
+          <Link
+            href="/cultura"
+            onClick={closeAll}
+            className="text-2xl font-medium py-3"
+            style={{
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-text-primary)',
+              minHeight: '52px',
+            }}
+          >
+            Cultura Guatemala
+          </Link>
+
+          <Link
+            href="/about"
+            onClick={closeAll}
+            className="text-2xl font-medium py-3"
+            style={{
+              fontFamily: 'var(--font-display)',
+              color: 'var(--color-text-primary)',
+              minHeight: '52px',
+            }}
+          >
+            Sobre Nosotros
+          </Link>
+        </nav>
       </div>
 
-      {/* Menú mobile */}
-      {isMenuOpen && (
+      {/* ============================================
+          SUBMENÚ MOBILE — Categorías de tienda
+          Se desliza desde la derecha.
+          ============================================ */}
+      <div
+        className="lg:hidden fixed inset-0 z-[70] flex flex-col"
+        style={{
+          backgroundColor: 'var(--color-bg)',
+          transform: isSubmenuOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 350ms cubic-bezier(0.4, 0, 0.2, 1)',
+        }}
+      >
+        {/* Header del submenú — < a la izquierda, X a la derecha */}
         <div
-          className="lg:hidden border-t"
-          style={{
-            backgroundColor: 'var(--color-bg)',
-            borderColor: 'var(--color-border)',
-          }}
+          className="flex items-center justify-between px-6 border-b shrink-0"
+          style={{ height: '64px', borderColor: 'var(--color-border)' }}
         >
-          <nav className="flex flex-col px-4 py-4 gap-1">
-            <MobileNavLink href="/tienda" onClick={() => setIsMenuOpen(false)}>
-              Tienda
-            </MobileNavLink>
-            <MobileNavLink href="/tienda?is_traditional=true" onClick={() => setIsMenuOpen(false)}>
-              Ropa Típica
-            </MobileNavLink>
-            <MobileNavLink href="/tienda?is_traditional=false" onClick={() => setIsMenuOpen(false)}>
-              Complementos Modernos
-            </MobileNavLink>
-            <MobileNavLink href="/cultura" onClick={() => setIsMenuOpen(false)}>
-              Cultura Guatemala
-            </MobileNavLink>
-            <MobileNavLink href="/about" onClick={() => setIsMenuOpen(false)}>
-              Sobre Nosotros
-            </MobileNavLink>
-            <div className="border-t my-2" style={{ borderColor: 'var(--color-border)' }} />
-            <MobileNavLink href="/login" onClick={() => setIsMenuOpen(false)}>
-              Iniciar sesión
-            </MobileNavLink>
-          </nav>
+          <button
+            className="p-2 cursor-pointer"
+            onClick={closeSubmenu}
+            aria-label="Volver al menú"
+            style={{
+              minWidth: '44px',
+              minHeight: '44px',
+              color: 'var(--color-text-muted)',
+            }}
+          >
+            <ChevronLeftIcon />
+          </button>
+          <button
+            className="p-2 cursor-pointer"
+            onClick={closeAll}
+            aria-label="Cerrar menú"
+            style={{
+              minWidth: '44px',
+              minHeight: '44px',
+              color: 'var(--color-text-muted)',
+            }}
+          >
+            <CloseIcon />
+          </button>
         </div>
-      )}
-    </header>
+
+        {/* Categorías */}
+        <nav className="flex-1 flex flex-col justify-center px-8 gap-1 pb-20">
+          {/* Ropa Típica */}
+          <span
+            className="text-sm uppercase tracking-[0.2em] mb-3"
+            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+          >
+            Ropa Típica
+          </span>
+          <SubmenuLink href="/tienda?category=guipiles" onClick={closeAll}>
+            Güipiles
+          </SubmenuLink>
+          <SubmenuLink href="/tienda?category=cortes" onClick={closeAll}>
+            Cortes
+          </SubmenuLink>
+          <SubmenuLink href="/tienda?category=fajas" onClick={closeAll}>
+            Fajas
+          </SubmenuLink>
+          <SubmenuLink href="/tienda?category=perrajes" onClick={closeAll}>
+            Perrajes
+          </SubmenuLink>
+
+          <div className="my-5" style={{ height: '1px', backgroundColor: 'var(--color-border)' }} />
+
+          <span
+            className="text-sm uppercase tracking-[0.2em] mb-3"
+            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+          >
+            Complementos
+          </span>
+          <SubmenuLink href="/tienda?category=complementos-modernos" onClick={closeAll}>
+            Complementos Modernos
+          </SubmenuLink>
+          <SubmenuLink href="/tienda?category=accesorios" onClick={closeAll}>
+            Accesorios
+          </SubmenuLink>
+
+          <div className="my-5" style={{ height: '1px', backgroundColor: 'var(--color-border)' }} />
+
+          <span
+            className="text-sm uppercase tracking-[0.2em] mb-3"
+            style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+          >
+            Explorar
+          </span>
+          <SubmenuLink href="/tienda" onClick={closeAll}>
+            Ver todo
+          </SubmenuLink>
+          <SubmenuLink href="/tienda?is_featured=true" onClick={closeAll}>
+            Destacados
+          </SubmenuLink>
+        </nav>
+      </div>
+    </>
   )
 }
 
@@ -171,19 +370,41 @@ export default function Header() {
    COMPONENTES INTERNOS
    ============================================ */
 
+function SubmenuLink({
+  href,
+  onClick,
+  children,
+}: {
+  href: string
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <Link
+      href={href}
+      onClick={onClick}
+      className="text-lg font-light py-2"
+      style={{
+        fontFamily: 'var(--font-body)',
+        color: 'var(--color-text-secondary)',
+        minHeight: '44px',
+      }}
+    >
+      {children}
+    </Link>
+  )
+}
+
 function DropdownLink({ label }: { label: string }) {
   const [isOpen, setIsOpen] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   function handleMouseEnter() {
-    // Delay de 150ms antes de mostrar — evita flashazos accidentales
     timeoutRef.current = setTimeout(() => setIsOpen(true), 150)
   }
 
   function handleMouseLeave() {
-    // Cancelar el timeout de entrada si el mouse sale antes de los 150ms
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    // Pequeño delay antes de cerrar para que no desaparezca de golpe
     timeoutRef.current = setTimeout(() => setIsOpen(false), 200)
   }
 
@@ -206,8 +427,6 @@ function DropdownLink({ label }: { label: string }) {
         {label}
         <ChevronDownIcon />
       </Link>
-
-      {/* Puente invisible entre el botón y el dropdown para evitar parpadeo */}
       <div
         className="absolute left-1/2 -translate-x-1/2 w-[200%]"
         style={{
@@ -216,8 +435,6 @@ function DropdownLink({ label }: { label: string }) {
           pointerEvents: isOpen ? 'auto' : 'none',
         }}
       />
-
-      {/* Mega dropdown con animación de entrada: fade + slide down */}
       <div
         className="fixed left-0 w-full transition-all"
         style={{
@@ -240,8 +457,6 @@ function DropdownLink({ label }: { label: string }) {
         >
           <div className="max-w-7xl mx-auto px-10 py-10">
             <div className="grid grid-cols-3 gap-12">
-
-              {/* Columna: Ropa Típica */}
               <div>
                 <Link
                   href="/tienda?is_traditional=true"
@@ -261,8 +476,6 @@ function DropdownLink({ label }: { label: string }) {
                   <MegaDropdownItem href="/tienda?category=perrajes">Perrajes</MegaDropdownItem>
                 </div>
               </div>
-
-              {/* Columna: Complementos Modernos */}
               <div>
                 <Link
                   href="/tienda?is_traditional=false"
@@ -280,8 +493,6 @@ function DropdownLink({ label }: { label: string }) {
                   <MegaDropdownItem href="/tienda?category=accesorios">Accesorios</MegaDropdownItem>
                 </div>
               </div>
-
-              {/* Columna: Explorar */}
               <div>
                 <span
                   className="block text-base font-semibold mb-4 pb-2 border-b"
@@ -298,7 +509,6 @@ function DropdownLink({ label }: { label: string }) {
                   <MegaDropdownItem href="/tienda?is_featured=true">Destacados</MegaDropdownItem>
                 </div>
               </div>
-
             </div>
           </div>
         </div>
@@ -323,7 +533,6 @@ function MegaDropdownItem({ href, children }: { href: string; children: React.Re
   )
 }
 
-{/* 4) NavLink con subrayado animado izquierda→derecha en hover */}
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
     <Link
@@ -335,30 +544,6 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       }}
       onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
       onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
-    >
-      {children}
-    </Link>
-  )
-}
-
-function MobileNavLink({
-  href,
-  onClick,
-  children,
-}: {
-  href: string
-  onClick: () => void
-  children: React.ReactNode
-}) {
-  return (
-    <Link
-      href={href}
-      onClick={onClick}
-      className="block py-3 px-3 rounded-lg text-base font-medium"
-      style={{
-        color: 'var(--color-text-primary)',
-        minHeight: '44px',
-      }}
     >
       {children}
     </Link>
@@ -380,7 +565,7 @@ function IconButton({ label, children }: { label: string; children: React.ReactN
 }
 
 /* ============================================
-   ICONOS SVG — todos 22px y strokeWidth 1.5 para consistencia
+   ICONOS SVG
    ============================================ */
 
 function SearchIcon() {
@@ -425,6 +610,22 @@ function ChevronDownIcon() {
   return (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <polyline points="6 9 12 15 18 9" />
+    </svg>
+  )
+}
+
+function ChevronRightIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="9 18 15 12 9 6" />
+    </svg>
+  )
+}
+
+function ChevronLeftIcon() {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="15 18 9 12 15 6" />
     </svg>
   )
 }

@@ -129,7 +129,7 @@ export default function HomePage() {
         />
 
         {/* Contenido del hero */}
-        <div className="relative z-10 flex items-end px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24" style={{ minHeight: '85vh' }}>
+        <div className="relative z-10 flex items-end px-4 sm:px-6 lg:px-10 py-16 sm:py-20 lg:py-24" style={{ minHeight: '70vh' }}>
           <div className="max-w-2xl">
             <span
               className="block text-sm sm:text-base uppercase tracking-widest mb-4"
