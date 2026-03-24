@@ -19,12 +19,15 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-end">
           {/* Lado izquierdo — texto editorial */}
           <div className="lg:col-span-7 flex flex-col justify-end">
-            <span
-              className="block text-xs uppercase tracking-[0.3em] mb-6"
-              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
-            >
-              Sobre nosotros
-            </span>
+            <div className="flex items-center gap-4 mb-6">
+              <span
+                className="text-xs uppercase tracking-[0.3em]"
+                style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+              >
+                Sobre nosotros
+              </span>
+              <div className="h-px flex-1" style={{ backgroundColor: 'var(--color-border)' }} />
+            </div>
             <h1
               className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-[1.05] mb-8"
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
@@ -67,28 +70,18 @@ export default function AboutPage() {
           ============================================ */}
       <section className="px-6 sm:px-10 lg:px-20 py-20 sm:py-28 lg:py-32">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
-          {/* Imagen */}
-          <div
-            className="relative overflow-hidden"
-            style={{ borderRadius: 'var(--radius-lg)', aspectRatio: '4 / 5' }}
-          >
-            <Image
-              src="/image/Guipiles.jpeg"
-              alt="Güipiles guatemaltecos coloridos"
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-            />
-          </div>
 
           {/* Texto */}
           <div>
-            <span
-              className="block text-xs uppercase tracking-[0.3em] mb-4"
-              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
-            >
-              El origen
-            </span>
+            <div className="flex items-center gap-4 mb-4">
+              <span
+                className="text-xs uppercase tracking-[0.3em]"
+                style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+              >
+                El origen
+              </span>
+              <div className="h-px flex-1" style={{ backgroundColor: 'var(--color-border)' }} />
+            </div>
             <h2
               className="text-3xl sm:text-4xl font-bold leading-tight mb-8"
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
@@ -127,6 +120,20 @@ export default function AboutPage() {
                 </p>
               </div>
             </div>
+          </div>
+
+          {/* Imagen */}
+          <div
+            className="relative overflow-hidden"
+            style={{ borderRadius: 'var(--radius-lg)', aspectRatio: '4 / 5' }}
+          >
+            <Image
+              src="/image/Guipiles.jpeg"
+              alt="Güipiles guatemaltecos coloridos"
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-cover"
+            />
           </div>
         </div>
       </section>
@@ -172,12 +179,15 @@ export default function AboutPage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20 items-center">
           {/* Texto */}
           <div className="lg:order-1">
-            <span
-              className="block text-xs uppercase tracking-[0.3em] mb-4"
-              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
-            >
-              Nuestra misión
-            </span>
+            <div className="flex items-center gap-4 mb-4">
+              <span
+                className="text-xs uppercase tracking-[0.3em]"
+                style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+              >
+                Nuestra misión
+              </span>
+              <div className="h-px flex-1" style={{ backgroundColor: 'var(--color-border)' }} />
+            </div>
             <h2
               className="text-3xl sm:text-4xl font-bold leading-tight mb-8"
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
@@ -224,12 +234,16 @@ export default function AboutPage() {
       <section className="px-6 sm:px-10 lg:px-20 py-20 sm:py-28 lg:py-36">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <span
-              className="block text-xs uppercase tracking-[0.3em] mb-4"
-              style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
-            >
-              La visión
-            </span>
+            <div className="flex items-center justify-center gap-4 mb-4">
+              <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
+              <span
+                className="text-xs uppercase tracking-[0.3em]"
+                style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+              >
+                La visión
+              </span>
+              <div className="h-px w-12" style={{ backgroundColor: 'var(--color-border)' }} />
+            </div>
             <h2
               className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight mb-8"
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}

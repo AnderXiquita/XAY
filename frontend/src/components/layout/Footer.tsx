@@ -55,7 +55,7 @@ export default function Footer() {
             </h4>
             <nav className="flex flex-col gap-2">
               <FooterLink href="/about">Sobre Nosotros</FooterLink>
-              <FooterLink href="/cultura">Cultura Guatemala</FooterLink>
+              <FooterLink href="/cultura">Cultura</FooterLink>
             </nav>
           </div>
 

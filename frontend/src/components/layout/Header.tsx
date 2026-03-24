@@ -89,7 +89,7 @@ export default function Header() {
             {/* Navegación desktop */}
             <nav className="hidden lg:flex items-center gap-8">
               <DropdownLink label="Tienda" />
-              <NavLink href="/cultura">Cultura Guatemala</NavLink>
+              <NavLink href="/cultura">Cultura</NavLink>
               <NavLink href="/about">Sobre Nosotros</NavLink>
             </nav>
 
@@ -248,7 +248,7 @@ export default function Header() {
               minHeight: '52px',
             }}
           >
-            Cultura Guatemala
+            Cultura
           </Link>
 
           <Link
