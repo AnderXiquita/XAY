@@ -1,9 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 
 export default function Header() {
+  const pathname = usePathname()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -88,9 +90,9 @@ export default function Header() {
 
             {/* Navegación desktop */}
             <nav className="hidden lg:flex items-center gap-8">
-              <DropdownLink label="Tienda" />
-              <NavLink href="/cultura">Cultura</NavLink>
-              <NavLink href="/about">Sobre Nosotros</NavLink>
+              <DropdownLink label="Tienda" isActive={pathname.startsWith('/tienda')} />
+              <NavLink href="/cultura" isActive={pathname.startsWith('/cultura')}>Cultura</NavLink>
+              <NavLink href="/about" isActive={pathname.startsWith('/about')}>Sobre Nosotros</NavLink>
             </nav>
 
             {/* Iconos desktop */}
@@ -219,7 +221,7 @@ export default function Header() {
               className="text-2xl font-medium"
               style={{
                 fontFamily: 'var(--font-display)',
-                color: 'var(--color-text-primary)',
+                color: pathname.startsWith('/tienda') ? 'var(--color-accent)' : 'var(--color-text-primary)',
               }}
             >
               Tienda
@@ -244,7 +246,7 @@ export default function Header() {
             className="text-2xl font-medium py-3"
             style={{
               fontFamily: 'var(--font-display)',
-              color: 'var(--color-text-primary)',
+              color: pathname.startsWith('/cultura') ? 'var(--color-accent)' : 'var(--color-text-primary)',
               minHeight: '52px',
             }}
           >
@@ -257,7 +259,7 @@ export default function Header() {
             className="text-2xl font-medium py-3"
             style={{
               fontFamily: 'var(--font-display)',
-              color: 'var(--color-text-primary)',
+              color: pathname.startsWith('/about') ? 'var(--color-accent)' : 'var(--color-text-primary)',
               minHeight: '52px',
             }}
           >
@@ -395,9 +397,10 @@ function SubmenuLink({
   )
 }
 
-function DropdownLink({ label }: { label: string }) {
+function DropdownLink({ label, isActive }: { label: string; isActive?: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const baseColor = isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)'
 
   function handleMouseEnter() {
     timeoutRef.current = setTimeout(() => setIsOpen(true), 150)
@@ -416,13 +419,13 @@ function DropdownLink({ label }: { label: string }) {
     >
       <Link
         href="/tienda"
-        className="flex items-center gap-1 text-base font-light transition-colors cursor-pointer animated-underline"
+        className={`flex items-center gap-1 text-base font-light transition-colors cursor-pointer animated-underline${isActive ? ' animated-underline-active' : ''}`}
         style={{
-          color: 'var(--color-text-secondary)',
+          color: baseColor,
           fontFamily: 'var(--font-body)',
         }}
         onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-        onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+        onMouseLeave={(e) => (e.currentTarget.style.color = baseColor)}
       >
         {label}
         <ChevronDownIcon />
@@ -533,17 +536,19 @@ function MegaDropdownItem({ href, children }: { href: string; children: React.Re
   )
 }
 
-function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
+function NavLink({ href, children, isActive }: { href: string; children: React.ReactNode; isActive?: boolean }) {
+  const baseColor = isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)'
+
   return (
     <Link
       href={href}
-      className="text-base font-light transition-colors animated-underline"
+      className={`text-base font-light transition-colors animated-underline${isActive ? ' animated-underline-active' : ''}`}
       style={{
-        color: 'var(--color-text-secondary)',
+        color: baseColor,
         fontFamily: 'var(--font-body)',
       }}
       onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+      onMouseLeave={(e) => (e.currentTarget.style.color = baseColor)}
     >
       {children}
     </Link>

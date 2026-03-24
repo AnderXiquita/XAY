@@ -113,7 +113,8 @@ body {
   transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.animated-underline:hover::after {
+.animated-underline:hover::after,
+.animated-underline-active::after {
   transform: scaleX(1);
 }
 

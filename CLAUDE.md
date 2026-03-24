@@ -335,7 +335,7 @@ Reglas específicas para este proyecto:
 **Navegación principal:**
 - Nuevos ingresos
 - Tienda (con filtros por categoría, departamento, municipio, color, rango de precio)
-- Cultura Guatemala (sección editorial/educativa)
+- Cultura (sección editorial/educativa)
 - Complementos Modernos
 - Sobre nosotros
 - Búsqueda, Favoritos, Carrito, Mi cuenta
@@ -360,11 +360,15 @@ Reglas específicas para este proyecto:
 - Estado (si está vendido, mostrar "Vendido — Solicitar pieza similar")
 - Botón agregar al carrito (si disponible)
 
-**Sección Cultura Guatemala:**
-- Artículos sobre la ropa típica por departamento
-- Historia del tejido y bordado en Guatemala
-- Espacio para mostrar imágenes grandes y videos
-- Esta sección no vende, educa y genera conexión emocional con la marca
+**Sección Cultura** (ruta `/cultura`):
+- Header fijo: título "Historias detrás de cada hilo" + descripción + pills de categorías
+- Categorías: Todo, Tejido y técnicas, Departamentos, Artesanas, Idiomas, Tradiciones
+- Vista "Todo": feed tipo revista con layouts variados (horizontal ancho, par asimétrico 7/5, horizontal invertido) — NO grid uniforme
+- Vista de categoría individual: artículo editorial completo con imagen header, intro, secciones con subtítulos — formato blog centrado
+- Transición fade (250ms) al cambiar entre categorías
+- Los artículos no abren página nueva — todo cambia debajo de las pills en la misma pantalla
+- CTA al final conectando cultura con la tienda
+- Futuro: los artículos serán gestionados desde el panel admin (CRUD + elegir destacados)
 
 ---
 
@@ -399,7 +403,7 @@ No asumir nada que no esté documentado en estos archivos o en este CLAUDE.md.
 11. Subida de imágenes a Cloudinary
 12. Sistema de solicitud de pieza similar
 13. Favoritos
-14. Sección Cultura Guatemala
+14. Sección Cultura
 15. Optimización, SEO, performance
 
 **No avanzar al siguiente bloque sin que el anterior funcione y sea entendido.**
@@ -433,8 +437,8 @@ El frontend (Next.js) ya tiene las siguientes páginas y componentes funcionales
 | Ruta | Archivo | Estado |
 |---|---|---|
 | `/` (Home) | `app/page.tsx` | Completa y pulida (desktop + mobile) |
-| `/about` (Sobre Nosotros) | `app/about/page.tsx` | Completa — diseño editorial tipográfico |
-| `/cultura` | Pendiente | No construida aún |
+| `/about` (Sobre Nosotros) | `app/about/page.tsx` | Completa — hero split (texto + imagen), origen, quote, misión, visión, CTA |
+| `/cultura` | `app/cultura/page.tsx` | Primera versión completa — datos hardcodeados |
 | `/tienda` (Catálogo) | Pendiente | No construida — requiere backend primero |
 
 #### Componentes de layout
@@ -463,6 +467,32 @@ El frontend (Next.js) ya tiene las siguientes páginas y componentes funcionales
 5. **Mapa de Guatemala** — SVG interactivo con paths reales de mapsvg.com (CC0). Click para seleccionar departamento (no hover, para evitar problemas en mobile). Panel de info a la derecha con nombre, municipios, descripción, y botón "Ver prendas". Scroll lock con `requestAnimationFrame` para evitar saltos.
 6. **Nuestra historia** — Título centrado, dos columnas de texto, línea separadora, tres pilares con números grandes (01, 02, 03), botón "Conocer más sobre nosotros".
 
+### About page (Sobre Nosotros) — Secciones en orden
+
+1. **Hero split** — Texto editorial a la izquierda (7 cols), imagen vertical a la derecha (5 cols). Etiqueta "Sobre nosotros" con línea decorativa. NO es full-bleed como el home.
+2. **El origen** — Imagen + texto en dos columnas. Historia de cómo nació XAY. Mención sutil del nombre (X = Xiquita, A+Y = Ajquejay) en un apartado pequeño con línea separadora, no como protagonista.
+3. **Quote** — Frase editorial sobre imagen de fondo con overlay oscuro. "Si una prenda lleva semanas de trabajo artesanal, merece una vitrina digna."
+4. **Nuestra misión** — Texto izquierda, imagen derecha. Cerrar la brecha entre tradición y mundo digital.
+5. **La visión** — Centrada con líneas decorativas a ambos lados. Expansión a otros países (Guatemala, México, Perú).
+6. **CTA final** — Fondo oscuro con imagen sutil de fondo (8% opacidad). "La ropa típica no es del pasado. Es el presente, bien presentado."
+
+### Cultura page — Secciones y comportamiento
+
+1. **Header fijo** — Etiqueta "Cultura" con línea, título "Historias detrás de cada hilo" en dos columnas (título izq, descripción der), pills de categorías horizontales con scroll en mobile.
+2. **Vista "Todo"** (activeCategory === 'all') — Feed tipo revista con layouts variados que se repiten en patrón:
+   - Patrón 0: card horizontal ancha con texto superpuesto sobre imagen (aspect 21/9)
+   - Patrón 1+2: par asimétrico — card grande (7 cols) + card chica (5 cols) lado a lado
+   - Patrón 3: card horizontal invertida — texto izquierda (fondo surface) + imagen derecha
+3. **Vista de artículo** (activeCategory !== 'all') — Artículo editorial completo:
+   - Imagen header con overlay y título/fecha superpuestos (aspect 21/9)
+   - Cuerpo centrado (max-w-3xl), formato blog: intro, secciones con h2, párrafos, imágenes ocasionales
+   - Botón "Volver a todos los artículos" al final
+4. **Transiciones** — Fade out/in (250ms) con translateY sutil al cambiar de categoría.
+5. **CTA** — "Cada prenda tiene una historia. Conocela en persona." con botón a la tienda.
+6. **Datos** — 5 artículos hardcodeados (uno por categoría), cada uno con secciones/subtemas. Se reemplazarán por datos de la API.
+
+**Imágenes de cultura** (en `frontend/public/image/`): `Tejidos y tecnicas.jpg`, `Departamentos.jpg`, `Artesanas.jpg`, `Idiomas.jpg`, `Tradiciones.jpg`.
+
 ### Navegación mobile — Decisiones de diseño
 
 **Header mobile:**
@@ -473,7 +503,7 @@ El frontend (Next.js) ya tiene las siguientes páginas y componentes funcionales
 **Menú hamburguesa (fullscreen, `z-60`):**
 - Cubre toda la pantalla incluyendo el navbar
 - Header: "Menú" + X para cerrar
-- Links grandes centrados: Tienda (con flecha `>` que abre submenú), Cultura Guatemala, Sobre Nosotros
+- Links grandes centrados: Tienda (con flecha `>` que abre submenú), Cultura, Sobre Nosotros
 - Click en "Tienda" → navega a `/tienda`. Click en `>` → abre submenú
 - Animación: slide desde la izquierda (350ms cubic-bezier)
 
@@ -511,21 +541,22 @@ Título Grande
 - Hero: `1.jpg`, `6.jpg`, `Perajes.jpg` (carrusel)
 - Productos destacados: `Destacadas 1.jpg` a `Destacadas 4.jpg`
 - Categorías: `Guipiles.jpeg`, `Cortes.jpg`, `Fajas.jpeg`, `Souvenirs.jpeg`, `Complementos.jpeg`, `Perajes.jpg`
+- Cultura: `Tejidos y tecnicas.jpg`, `Departamentos.jpg`, `Artesanas.jpg`, `Idiomas.jpg`, `Tradiciones.jpg`
 - Mapa: `guatemala-map.svg` (CC0 de mapsvg.com)
-- Favicon: `favicon.svg`
+- Favicon: `favicon.svg` (círculo negro #000000 con "X" blanca)
 
 **Importante sobre imágenes:** Next.js cachea imágenes optimizadas en `.next/cache/`. Si se reemplazan imágenes con el mismo nombre, hay que eliminar la carpeta `.next` y reiniciar el dev server (`rm -rf .next && npm run dev`).
 
 ### Lo que falta construir (en orden sugerido)
 
-1. **Página Cultura Guatemala** (`/cultura`) — sección editorial/educativa
+1. ~~**Página Cultura** (`/cultura`) — sección editorial/educativa~~ ✅ Primera versión completa (datos hardcodeados)
 2. **Backend completo** — Prisma schema, migraciones, seed, API REST
 3. **Página de catálogo** (`/tienda`) — grid de productos con filtros, conectada a la API
 4. **Página de detalle de producto** — galería de fotos, info completa, botón agregar al carrito
 5. **Carrito de compras** — persistido en BD, drawer en desktop, página completa en mobile
 6. **Checkout y órdenes** — flujo de pago por transferencia
 7. **Autenticación** — login/registro local + OAuth (Google, Apple)
-8. **Panel de administrador** — CRUD de productos, gestión de órdenes, subida de imágenes
+8. **Panel de administrador** — CRUD de productos, gestión de órdenes, subida de imágenes, gestión de artículos culturales
 9. **Sistema de solicitud de pieza similar**
 10. **Favoritos**
 11. **Optimización, SEO, performance**

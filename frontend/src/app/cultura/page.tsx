@@ -308,11 +308,15 @@ export default function CulturaPage() {
       setActiveCategory(categoryId)
       setIsTransitioning(false)
 
-      if (categoryId !== 'all' && contentRef.current) {
-        setTimeout(() => {
-          contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }, 50)
-      }
+      // Scroll al inicio del contenido cuando se entra a un artículo,
+      // o al tope de la página cuando se vuelve a "Todo"
+      setTimeout(() => {
+        if (categoryId === 'all') {
+          window.scrollTo({ top: 0, behavior: 'smooth' })
+        } else if (contentRef.current) {
+          contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }
+      }, 50)
     }, 250)
   }, [activeCategory])
 
@@ -676,7 +680,7 @@ export default function CulturaPage() {
                 {/* Botón volver */}
                 <div className="text-center">
                   <button
-                    onClick={() => setActiveCategory('all')}
+                    onClick={() => handleCategoryChange('all')}
                     className="inline-flex items-center gap-2 text-sm font-medium cursor-pointer transition-colors duration-300"
                     style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
                     onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent-hover)')}
