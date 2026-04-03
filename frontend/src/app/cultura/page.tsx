@@ -298,25 +298,33 @@ export default function CulturaPage() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [isTransitioning, setIsTransitioning] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
+  const pillsRef = useRef<HTMLDivElement>(null)
 
   const handleCategoryChange = useCallback((categoryId: string) => {
     if (categoryId === activeCategory) return
 
-    // Fade out → cambiar contenido → fade in
+    // Fade out (250ms) → scroll instantáneo cuando la opacidad ya es 0 → cambiar contenido → fade in
     setIsTransitioning(true)
     setTimeout(() => {
+      // El contenido ya es invisible (opacity: 0). Scroll instantáneo antes de cambiar el contenido.
+      // Pausamos Lenis primero para que no sobreescriba el scrollTo en su loop de rAF,
+      // luego lo reactivamos en el siguiente frame una vez el browser ya aplicó la nueva posición.
+      const lenis = (window as any).__lenis
+      lenis?.stop()
+
+      if (categoryId === 'all') {
+        window.scrollTo({ top: 0 })
+      } else if (pillsRef.current) {
+        const headerHeight = document.querySelector('header')?.getBoundingClientRect().height || 0
+        const pillsTop = pillsRef.current.getBoundingClientRect().top + window.scrollY
+        window.scrollTo({ top: pillsTop - headerHeight - 16 })
+      }
+
+      requestAnimationFrame(() => lenis?.start())
+
+      // Cambiar contenido y fade in
       setActiveCategory(categoryId)
       setIsTransitioning(false)
-
-      // Scroll al inicio del contenido cuando se entra a un artículo,
-      // o al tope de la página cuando se vuelve a "Todo"
-      setTimeout(() => {
-        if (categoryId === 'all') {
-          window.scrollTo({ top: 0, behavior: 'smooth' })
-        } else if (contentRef.current) {
-          contentRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      }, 50)
     }, 250)
   }, [activeCategory])
 
@@ -362,10 +370,10 @@ export default function CulturaPage() {
           </div>
 
           {/* Categorías como pills */}
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 sm:mx-0 sm:px-0 sm:flex-wrap scrollbar-hide">
+          <div ref={pillsRef} className="flex gap-3 overflow-x-auto pb-2 -mx-6 px-6 sm:mx-0 sm:px-0 sm:flex-wrap scrollbar-hide">
             {/* Pill "Todo" */}
             <button
-              onClick={() => setActiveCategory('all')}
+              onClick={() => handleCategoryChange('all')}
               className="shrink-0 px-5 py-2.5 text-sm font-medium transition-all duration-300 cursor-pointer"
               style={{
                 borderRadius: '9999px',

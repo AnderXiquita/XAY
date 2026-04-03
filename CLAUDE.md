@@ -536,6 +536,17 @@ Título Grande
 
 **Smooth scroll:** Implementado con la librería Lenis (`@studio-freight/lenis`).
 
+**Problema conocido resuelto — Lenis vs scrolls programáticos:**
+Lenis corre en un loop de `requestAnimationFrame` y sobreescribe la posición del scroll en cada frame mientras hay momentum (el "patín" después de soltar el scroll). Si se llama `window.scrollTo()` mientras Lenis está decelerando, Lenis pisa encima y el scroll programático se ignora.
+
+**Solución aplicada:**
+- `SmoothScroll.tsx` expone la instancia de Lenis en `window.__lenis` al montarse (y la elimina en el cleanup).
+- Antes de cualquier `window.scrollTo()` programático, se llama `(window as any).__lenis?.stop()` para pausar Lenis.
+- Se ejecuta el `window.scrollTo()` normalmente.
+- Se llama `requestAnimationFrame(() => (window as any).__lenis?.start())` para reactivar Lenis en el siguiente frame, una vez el browser ya aplicó la nueva posición.
+
+**Cuándo aplicar este patrón:** Siempre que se necesite hacer un scroll programático (`window.scrollTo`, saltar a una sección, etc.) en cualquier página que use el layout global. Sin este patrón, el scroll funciona solo cuando la página está completamente quieta pero falla intermitentemente si el usuario acababa de scrollear.
+
 ### Imágenes actuales (en `frontend/public/image/`)
 
 - Hero: `1.jpg`, `6.jpg`, `Perajes.jpg` (carrusel)
