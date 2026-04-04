@@ -42,8 +42,10 @@ export default function BottomNav() {
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderColor: 'var(--color-border)',
-        // calc(100% + safe-area) garantiza que cruce también la zona del indicador del iPhone
-        transform: visible ? 'translateY(0)' : 'translateY(calc(100% + env(safe-area-inset-bottom, 20px)))',
+        // padding-bottom absorbe el safe area del iPhone dentro de la barra.
+        // Así translateY(100%) se lleva toda la barra incluyendo esa zona — sin pausa intermedia.
+        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+        transform: visible ? 'translateY(0)' : 'translateY(100%)',
         transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
