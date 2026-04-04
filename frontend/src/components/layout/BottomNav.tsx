@@ -19,7 +19,6 @@ export default function BottomNav() {
         const currentY = window.scrollY
         const diff = currentY - lastScrollY.current
 
-        // Umbral de 6px para no dispararse con micro-vibraciones del scroll
         if (diff > 6) {
           setVisible(false)
         } else if (diff < -6) {
@@ -43,21 +42,22 @@ export default function BottomNav() {
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
         borderColor: 'var(--color-border)',
-        transform: visible ? 'translateY(0)' : 'translateY(100%)',
+        // calc(100% + safe-area) garantiza que cruce también la zona del indicador del iPhone
+        transform: visible ? 'translateY(0)' : 'translateY(calc(100% + env(safe-area-inset-bottom, 20px)))',
         transition: 'transform 300ms cubic-bezier(0.4, 0, 0.2, 1)',
       }}
     >
       <div className="flex items-center justify-around h-16">
-        <BottomNavItem href="/" label="Inicio" isActive={pathname === '/'}>
+        <BottomNavItem href="/" isActive={pathname === '/'}>
           <HomeIcon />
         </BottomNavItem>
-        <BottomNavItem href="/favoritos" label="Favoritos" isActive={pathname === '/favoritos'} badge={0}>
+        <BottomNavItem href="/favoritos" isActive={pathname === '/favoritos'} badge={0}>
           <HeartIcon />
         </BottomNavItem>
-        <BottomNavItem href="/carrito" label="Carrito" isActive={pathname === '/carrito'} badge={0}>
+        <BottomNavItem href="/carrito" isActive={pathname === '/carrito'} badge={0}>
           <CartIcon />
         </BottomNavItem>
-        <BottomNavItem href="/cuenta" label="Mi cuenta" isActive={pathname === '/cuenta'}>
+        <BottomNavItem href="/cuenta" isActive={pathname === '/cuenta'}>
           <UserIcon />
         </BottomNavItem>
       </div>
@@ -67,13 +67,11 @@ export default function BottomNav() {
 
 function BottomNavItem({
   href,
-  label,
   isActive,
   badge,
   children,
 }: {
   href: string
-  label: string
   isActive: boolean
   badge?: number
   children: React.ReactNode
@@ -81,7 +79,7 @@ function BottomNavItem({
   return (
     <Link
       href={href}
-      className="relative flex flex-col items-center justify-center gap-1"
+      className="relative flex items-center justify-center"
       style={{
         minWidth: '64px',
         minHeight: '48px',
@@ -101,28 +99,22 @@ function BottomNavItem({
               color: 'var(--color-text-inverse)',
               fontFamily: 'var(--font-body)',
               fontSize: '10px',
-              fontWeight: 600,
+              fontWeight: 500,
             }}
           >
             {badge > 9 ? '9+' : badge}
           </span>
         )}
       </div>
-      <span
-        className="text-xs"
-        style={{ fontFamily: 'var(--font-body)', fontSize: '10px' }}
-      >
-        {label}
-      </span>
     </Link>
   )
 }
 
-/* Iconos SVG — 22px, strokeWidth 1.5 */
+/* Iconos SVG — 24px, strokeWidth 1.5 */
 
 function HeartIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
     </svg>
   )
@@ -130,7 +122,7 @@ function HeartIcon() {
 
 function HomeIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
       <polyline points="9 22 9 12 15 12 15 22" />
     </svg>
@@ -139,7 +131,7 @@ function HomeIcon() {
 
 function CartIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
       <line x1="3" y1="6" x2="21" y2="6" />
       <path d="M16 10a4 4 0 01-8 0" />
@@ -149,7 +141,7 @@ function CartIcon() {
 
 function UserIcon() {
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
       <circle cx="12" cy="7" r="4" />
     </svg>
