@@ -58,8 +58,8 @@ export default function Header() {
       <header
         className="sticky top-0 z-50 backdrop-blur-sm border-b"
         style={{
-          backgroundColor: 'rgba(255, 255, 255, 0.95)',
-          borderColor: 'var(--color-border)',
+          backgroundColor: 'rgba(27, 43, 65, 0.97)',
+          borderColor: 'rgba(251, 249, 228, 0.15)',
         }}
       >
         <div className="px-4 sm:px-6 lg:px-10">
@@ -70,7 +70,7 @@ export default function Header() {
               className="lg:hidden p-2 cursor-pointer"
               onClick={() => setIsMenuOpen(true)}
               aria-label="Abrir menú"
-              style={{ minWidth: '44px', minHeight: '44px' }}
+              style={{ minWidth: '44px', minHeight: '44px', color: 'var(--color-text-inverse)' }}
             >
               <MenuIcon />
             </button>
@@ -81,7 +81,7 @@ export default function Header() {
               className="text-2xl font-bold hidden lg:block"
               style={{
                 fontFamily: 'var(--font-display)',
-                color: 'var(--color-text-primary)',
+                color: 'var(--color-text-inverse)',
                 letterSpacing: '0.2em',
               }}
             >
@@ -104,7 +104,7 @@ export default function Header() {
                     width: isSearchOpen ? '240px' : '44px',
                     height: '44px',
                     borderRadius: '9999px',
-                    border: isSearchOpen ? '1px solid var(--color-border)' : '1px solid transparent',
+                    border: isSearchOpen ? '1px solid rgba(255, 251, 244, 0.3)' : '1px solid transparent',
                     backgroundColor: 'transparent',
                     transitionDuration: '300ms',
                     transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -113,10 +113,10 @@ export default function Header() {
                   <button
                     aria-label="Buscar"
                     className="flex items-center justify-center shrink-0 cursor-pointer transition-colors"
-                    style={{ width: '44px', height: '44px', color: 'var(--color-text-secondary)' }}
+                    style={{ width: '44px', height: '44px', color: 'rgba(255, 251, 244, 0.7)' }}
                     onClick={() => setIsSearchOpen(!isSearchOpen)}
-                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-                    onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-inverse)')}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 251, 244, 0.7)')}
                   >
                     <SearchIcon />
                   </button>
@@ -127,7 +127,7 @@ export default function Header() {
                     className="w-full h-full pr-3 text-sm outline-none"
                     style={{
                       backgroundColor: 'transparent',
-                      color: 'var(--color-text-primary)',
+                      color: 'var(--color-text-inverse)',
                       fontFamily: 'var(--font-body)',
                       opacity: isSearchOpen ? 1 : 0,
                       transition: 'opacity 200ms ease',
@@ -192,7 +192,7 @@ export default function Header() {
               className="text-xl font-bold lg:hidden"
               style={{
                 fontFamily: 'var(--font-display)',
-                color: 'var(--color-text-primary)',
+                color: 'var(--color-text-inverse)',
                 letterSpacing: '0.2em',
               }}
             >
@@ -450,7 +450,7 @@ function SubmenuLink({
 function DropdownLink({ label, isActive }: { label: string; isActive?: boolean }) {
   const [isOpen, setIsOpen] = useState(false)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const baseColor = isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)'
+  const baseColor = isActive ? 'var(--color-text-inverse)' : 'rgba(255, 251, 244, 0.7)'
 
   function handleMouseEnter() {
     timeoutRef.current = setTimeout(() => setIsOpen(true), 150)
@@ -461,6 +461,11 @@ function DropdownLink({ label, isActive }: { label: string; isActive?: boolean }
     timeoutRef.current = setTimeout(() => setIsOpen(false), 200)
   }
 
+  function handleClick() {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current)
+    setIsOpen(false)
+  }
+
   return (
     <div
       className="relative"
@@ -469,12 +474,13 @@ function DropdownLink({ label, isActive }: { label: string; isActive?: boolean }
     >
       <Link
         href="/tienda"
-        className={`flex items-center gap-1 text-base font-light transition-colors cursor-pointer animated-underline${isActive ? ' animated-underline-active' : ''}`}
+        onClick={handleClick}
+        className="flex items-center gap-1 text-base font-light transition-colors cursor-pointer"
         style={{
           color: baseColor,
           fontFamily: 'var(--font-body)',
         }}
-        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
+        onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-inverse)')}
         onMouseLeave={(e) => (e.currentTarget.style.color = baseColor)}
       >
         {label}
@@ -587,17 +593,17 @@ function MegaDropdownItem({ href, children }: { href: string; children: React.Re
 }
 
 function NavLink({ href, children, isActive }: { href: string; children: React.ReactNode; isActive?: boolean }) {
-  const baseColor = isActive ? 'var(--color-accent)' : 'var(--color-text-secondary)'
+  const baseColor = isActive ? 'var(--color-text-inverse)' : 'rgba(255, 251, 244, 0.7)'
 
   return (
     <Link
       href={href}
-      className={`text-base font-light transition-colors animated-underline${isActive ? ' animated-underline-active' : ''}`}
+      className="text-base font-light transition-colors"
       style={{
         color: baseColor,
         fontFamily: 'var(--font-body)',
       }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
+      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-inverse)')}
       onMouseLeave={(e) => (e.currentTarget.style.color = baseColor)}
     >
       {children}
@@ -610,9 +616,9 @@ function IconButton({ label, children }: { label: string; children: React.ReactN
     <button
       aria-label={label}
       className="p-2 rounded-lg transition-colors cursor-pointer"
-      style={{ minWidth: '44px', minHeight: '44px', color: 'var(--color-text-secondary)' }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-accent)')}
-      onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-text-secondary)')}
+      style={{ minWidth: '44px', minHeight: '44px', color: 'rgba(255, 251, 244, 0.7)' }}
+      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-inverse)')}
+      onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 251, 244, 0.7)')}
     >
       {children}
     </button>

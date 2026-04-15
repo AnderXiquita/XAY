@@ -8,22 +8,22 @@
 
 :root {
   /* Fondos */
-  --color-bg: #FFFFFF;
-  --color-surface: #F9F7F5;
-  --color-surface-alt: #F0ECE7;
-  --color-border: #E8DDD0;
+  --color-bg: #FFFBF4;
+  --color-surface: #F5F0E8;
+  --color-surface-alt: #EDE7D8;
+  --color-border: #D8CFBC;
 
   /* Texto */
-  --color-text-primary: #2C1810;
-  --color-text-secondary: #6B4C3B;
-  --color-text-muted: #9C7E6F;
-  --color-text-inverse: #FAF7F2;
+  --color-text-primary: #1b2b41;
+  --color-text-secondary: #2A3F5C;
+  --color-text-muted: #5A7090;
+  --color-text-inverse: #FFFBF4;
 
   /* Acción */
-  --color-accent: #8B4513;
-  --color-accent-hover: #6B3410;
-  --color-accent-light: #D4956A;
-  --color-accent-subtle: #F0E0D0;
+  --color-accent: #1b2b41;
+  --color-accent-hover: #111D2C;
+  --color-accent-light: #3A5F8A;
+  --color-accent-subtle: #D5E0EC;
 
   /* Estados */
   --color-success: #5A7A4A;
@@ -40,10 +40,10 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
 
-  /* Sombras — usan el café del proyecto, no negro */
-  --shadow-sm: 0 1px 3px rgba(44, 24, 16, 0.08);
-  --shadow-md: 0 4px 12px rgba(44, 24, 16, 0.10);
-  --shadow-lg: 0 8px 24px rgba(44, 24, 16, 0.12);
+  /* Sombras — usan el azul marino del proyecto, no negro */
+  --shadow-sm: 0 1px 3px rgba(27, 43, 65, 0.08);
+  --shadow-md: 0 4px 12px rgba(27, 43, 65, 0.10);
+  --shadow-lg: 0 8px 24px rgba(27, 43, 65, 0.12);
 
   /* Transiciones */
   --transition-fast: 150ms ease;
@@ -122,6 +122,11 @@ body {
    ANIMACIÓN fadeInUp — usada en paneles que
    aparecen dinámicamente (mapa, tooltips, etc.)
    ============================================ */
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
 
 @keyframes fadeInUp {
   from {
