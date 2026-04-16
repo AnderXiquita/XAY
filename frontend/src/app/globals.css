@@ -14,16 +14,16 @@
   --color-border: #D8CFBC;
 
   /* Texto */
-  --color-text-primary: #1b2b41;
-  --color-text-secondary: #2A3F5C;
-  --color-text-muted: #5A7090;
+  --color-text-primary: #091F2C;
+  --color-text-secondary: #123245;
+  --color-text-muted: #4A7080;
   --color-text-inverse: #FFFBF4;
 
   /* Acción */
-  --color-accent: #1b2b41;
-  --color-accent-hover: #111D2C;
-  --color-accent-light: #3A5F8A;
-  --color-accent-subtle: #D5E0EC;
+  --color-accent: #091F2C;
+  --color-accent-hover: #05131C;
+  --color-accent-light: #1A4D63;
+  --color-accent-subtle: #CDE0E8;
 
   /* Estados */
   --color-success: #5A7A4A;
@@ -41,9 +41,9 @@
   --radius-xl: 24px;
 
   /* Sombras — usan el azul marino del proyecto, no negro */
-  --shadow-sm: 0 1px 3px rgba(27, 43, 65, 0.08);
-  --shadow-md: 0 4px 12px rgba(27, 43, 65, 0.10);
-  --shadow-lg: 0 8px 24px rgba(27, 43, 65, 0.12);
+  --shadow-sm: 0 1px 3px rgba(9, 31, 44, 0.08);
+  --shadow-md: 0 4px 12px rgba(9, 31, 44, 0.10);
+  --shadow-lg: 0 8px 24px rgba(9, 31, 44, 0.12);
 
   /* Transiciones */
   --transition-fast: 150ms ease;

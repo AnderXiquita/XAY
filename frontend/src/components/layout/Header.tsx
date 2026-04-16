@@ -58,7 +58,7 @@ export default function Header() {
       <header
         className="sticky top-0 z-50 backdrop-blur-sm border-b"
         style={{
-          backgroundColor: 'rgba(27, 43, 65, 0.97)',
+          backgroundColor: 'rgba(9, 31, 44, 0.97)',
           borderColor: 'rgba(251, 249, 228, 0.15)',
         }}
       >
