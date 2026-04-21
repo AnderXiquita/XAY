@@ -12,7 +12,7 @@ export async function getProducts(req: Request, res: Response, next: NextFunctio
 
 export async function getProductBySlug(req: Request, res: Response, next: NextFunction) {
   try {
-    const product = await ProductService.getProductBySlug(req.params.slug)
+    const product = await ProductService.getProductBySlug(String(req.params['slug'] ?? ''))
     res.json({ data: product })
   } catch (error) {
     next(error)

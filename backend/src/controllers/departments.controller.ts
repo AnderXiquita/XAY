@@ -12,7 +12,7 @@ export async function getDepartments(_req: Request, res: Response, next: NextFun
 
 export async function getDepartmentBySlug(req: Request, res: Response, next: NextFunction) {
   try {
-    const department = await DepartmentService.getDepartmentWithMunicipalities(req.params.slug)
+    const department = await DepartmentService.getDepartmentWithMunicipalities(String(req.params['slug'] ?? ''))
     if (!department) {
       res.status(404).json({ error: 'Departamento no encontrado', code: 'DEPARTMENT_NOT_FOUND' })
       return

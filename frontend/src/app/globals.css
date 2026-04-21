@@ -51,29 +51,10 @@
   --transition-slow: 400ms ease;
 }
 
-/* ============================================
-   SCROLLBAR — Delgada, con colores del proyecto.
-   Se oculta cuando no se hace scroll y aparece con fade suave.
-   ============================================ */
-
-/* Ancho delgado para navegadores que soportan scrollbar-width */
+/* Ancho delgado para navegadores que soportan scrollbar-width (Firefox) */
 html {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-accent-light) var(--color-surface);
-}
-
-/* Webkit (Chrome, Edge, Safari) */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--color-surface);
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: var(--color-accent-light);
-  border-radius: 9999px;
+  scrollbar-color: var(--color-accent) var(--color-surface);
 }
 
 /* Registrar las variables como tokens de Tailwind */
@@ -116,6 +97,13 @@ body {
 .animated-underline:hover::after,
 .animated-underline-active::after {
   transform: scaleX(1);
+}
+
+/* Variante para usar sobre fondos oscuros (navbar) */
+.animated-underline-inverse::after {
+  background-color: var(--color-text-inverse);
+  height: 1px;
+  opacity: 0.45;
 }
 
 /* ============================================
@@ -183,7 +171,7 @@ body {
 }
 
 /* ============================================
-   SCROLLBAR personalizada
+   SCROLLBAR — Webkit (Chrome, Edge, Safari)
    ============================================ */
 
 ::-webkit-scrollbar {
@@ -191,16 +179,16 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--color-bg);
+  background: var(--color-surface);
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--color-border);
-  border-radius: 3px;
+  background-color: var(--color-accent);
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--color-text-muted);
+  background-color: var(--color-accent-hover);
 }
 
 /* ============================================
@@ -216,4 +204,23 @@ body {
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* Scrollbar ultra delgada para dropdowns */
+.scrollbar-thin-dropdown {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}
+
+.scrollbar-thin-dropdown::-webkit-scrollbar {
+  width: 2px;
+}
+
+.scrollbar-thin-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin-dropdown::-webkit-scrollbar-thumb {
+  background-color: var(--color-border);
+  border-radius: 9999px;
 }

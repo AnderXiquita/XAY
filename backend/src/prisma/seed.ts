@@ -520,6 +520,272 @@ async function main() {
   console.log(`  ✓ ${departmentsWithMunicipalities.length} departamentos creados`)
   console.log(`  ✓ ${totalMunicipalities} municipios creados\n`)
 
+  // 3. Crear productos de prueba
+  // Imágenes repetidas por producto (misma foto en los 5 tipos) mientras no hay fotos reales.
+  // Cuando se suban fotos reales desde el admin, esto se reemplaza naturalmente.
+  console.log('Creando productos de prueba...')
+
+  const sampleProducts = [
+    {
+      slug: 'guipil-solola-clasico',
+      name: 'Güipil clásico de Sololá',
+      description: 'Güipil tejido en telar de cintura con patrones geométricos del calendario maya. Los colores rojo, morado y azul sobre fondo blanco son característicos de Sololá. Cada pieza tarda entre 4 y 6 semanas en terminarse.',
+      price: 850.00,
+      category: 'guipiles',
+      department: 'solola',
+      municipality: 'solola-muni',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 70,
+      length_cm: 65,
+      size_label: 'Talla única',
+      size_notes: 'Requiere ajuste de costura en laterales para tallas mayores a M.',
+      fabric_type: 'Algodón',
+      embroidery_type: 'hand',
+      colors: ['rojo', 'morado', 'azul', 'blanco'],
+      is_featured: true,
+      image: '/image/productos/prod1.jpg',
+    },
+    {
+      slug: 'corte-jaspeado-salcaja',
+      name: 'Corte jaspeado de Salcajá',
+      description: 'Corte tejido en telar de pedal con técnica de jaspe ikat. Los hilos son teñidos antes de ser tejidos, creando patrones que solo se revelan al terminar la tela. Salcajá es reconocida en todo el país por sus cortes jaspeados.',
+      price: 650.00,
+      category: 'cortes',
+      department: 'quetzaltenango',
+      municipality: 'salcaja',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 80,
+      length_cm: 320,
+      size_label: 'Talla única envolvente',
+      size_notes: 'Se usa envuelto a la cintura. El largo permite ajuste para diferentes estaturas.',
+      fabric_type: 'Algodón jaspeado',
+      embroidery_type: 'machine',
+      colors: ['morado', 'azul marino', 'vino'],
+      is_featured: false,
+      image: '/image/productos/prod2.jpg',
+    },
+    {
+      slug: 'guipil-nebaj-multicolor',
+      name: 'Güipil de Nebaj con bordado multicolor',
+      description: 'Güipil de Nebaj, Quiché, reconocible por su fondo blanco y sus bordados en rojo intenso. Las figuras de quetzales y flores son características de esta región. Las tejedoras de Nebaj son conocidas por la densidad y precisión de sus bordados.',
+      price: 1200.00,
+      category: 'guipiles',
+      department: 'quiche',
+      municipality: 'nebaj',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 72,
+      length_cm: 68,
+      size_label: 'S/M',
+      size_notes: 'Ideal para tallas S y M. Para talla L puede usarse sin ajuste pero queda más suelto.',
+      fabric_type: 'Algodón con seda vegetal en bordados',
+      embroidery_type: 'hand',
+      colors: ['blanco', 'rojo', 'verde', 'amarillo'],
+      is_featured: true,
+      image: '/image/productos/prod3.jpg',
+    },
+    {
+      slug: 'faja-chichicastenango-roja',
+      name: 'Faja tradicional de Chichicastenango',
+      description: 'Faja tejida a mano en telar de cintura. Los patrones geométricos en rojo sobre fondo negro son el sello de Chichicastenango. Se usa para sujetar el corte a la cintura y también como accesorio decorativo sobre blusas modernas.',
+      price: 280.00,
+      category: 'fajas',
+      department: 'quiche',
+      municipality: 'chichicastenango',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 8,
+      length_cm: 280,
+      size_label: 'Talla única',
+      size_notes: 'El largo de 280cm permite ajustarse a diferentes cinturas con las vueltas tradicionales.',
+      fabric_type: 'Algodón',
+      embroidery_type: 'hand',
+      colors: ['rojo', 'negro', 'amarillo'],
+      is_featured: true,
+      image: '/image/productos/prod4.jpg',
+    },
+    {
+      slug: 'perraje-momostenango-cafe',
+      name: 'Perraje de lana de Momostenango',
+      description: 'Perraje tejido con lana natural de oveja, proveniente de Momostenango, Totonicapán — reconocida como la capital de la lana en Guatemala. Se usa sobre los hombros, como manta o para cargar. El peso de la lana lo hace especialmente cálido.',
+      price: 450.00,
+      category: 'perrajes',
+      department: 'totonicapan',
+      municipality: 'momostenango',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 120,
+      length_cm: 180,
+      size_label: 'Talla única',
+      size_notes: 'Manta grande. Puede usarse doblado o extendido.',
+      fabric_type: 'Lana natural de oveja',
+      embroidery_type: 'mixed',
+      colors: ['café', 'crema', 'negro'],
+      is_featured: false,
+      image: '/image/productos/prod5.jpg',
+    },
+    {
+      slug: 'guipil-santiago-atitlan-vendido',
+      name: 'Güipil ceremonial de Santiago Atitlán',
+      description: 'Güipil ceremonial del municipio de Santiago Atitlán, Sololá. El bordado cubre casi la totalidad de la tela base, una técnica característica de esta comunidad. Esta pieza tardó aproximadamente 8 semanas en completarse.',
+      price: 950.00,
+      category: 'guipiles',
+      department: 'solola',
+      municipality: 'santiago-atitlan',
+      is_traditional: true,
+      status: 'sold',
+      width_cm: 68,
+      length_cm: 70,
+      size_label: 'M',
+      size_notes: 'Confeccionado para talla M. El bordado denso no permite modificaciones sin alterar el diseño.',
+      fabric_type: 'Algodón con bordado de seda',
+      embroidery_type: 'hand',
+      colors: ['amarillo', 'morado', 'rojo', 'verde'],
+      is_featured: false,
+      allow_similar_request: true,
+      image: '/image/productos/prod6.jpg',
+    },
+    {
+      slug: 'corte-totonicapan-azul',
+      name: 'Corte de Totonicapán azul noche',
+      description: 'Corte tejido en telar de pedal en Totonicapán. El azul noche profundo con detalles en hilo plateado es el estilo que identifica a esta región. La tela tiene un peso medio que la hace cómoda durante todo el año.',
+      price: 750.00,
+      category: 'cortes',
+      department: 'totonicapan',
+      municipality: 'totonicapan-muni',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 80,
+      length_cm: 310,
+      size_label: 'Talla única envolvente',
+      size_notes: 'Largo estándar para mujeres de 1.50m a 1.65m. Para mayor altura se usa con menos vueltas.',
+      fabric_type: 'Algodón con hilo metálico',
+      embroidery_type: 'machine',
+      colors: ['azul noche', 'plateado'],
+      is_featured: false,
+      image: '/image/productos/prod7.jpg',
+    },
+    {
+      slug: 'jeans-mezclilla-complemento',
+      name: 'Jeans de mezclilla oscuro',
+      description: 'Jean de mezclilla en tono oscuro, corte recto. Diseñado para combinarse con güipiles y blusas típicas. El tono neutro permite resaltar los colores del tejido guatemalteco sin competir con él.',
+      price: 320.00,
+      category: 'complementos-modernos',
+      department: null,
+      municipality: null,
+      is_traditional: false,
+      status: 'available',
+      width_cm: null,
+      length_cm: null,
+      size_label: 'S / M / L',
+      size_notes: 'Disponible en tallas S, M y L. Corte recto, tiro alto.',
+      fabric_type: 'Mezclilla 98% algodón 2% elastano',
+      embroidery_type: null,
+      colors: ['azul oscuro'],
+      is_featured: false,
+      image: '/image/productos/prod8.jpg',
+    },
+    {
+      slug: 'guipil-san-juan-sacatepequez',
+      name: 'Güipil de San Juan Sacatepéquez',
+      description: 'Güipil de San Juan Sacatepéquez, Guatemala. Reconocible por sus flores bordadas a mano en tonos rosa y magenta sobre fondo blanco o crema. Este municipio es uno de los más activos en la producción de textiles del departamento de Guatemala.',
+      price: 780.00,
+      category: 'guipiles',
+      department: 'guatemala',
+      municipality: 'san-juan-sacatepequez',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 71,
+      length_cm: 66,
+      size_label: 'M/L',
+      size_notes: 'Cómodo para tallas M y L sin necesidad de ajuste.',
+      fabric_type: 'Algodón',
+      embroidery_type: 'hand',
+      colors: ['blanco', 'rosa', 'magenta', 'verde'],
+      is_featured: true,
+      image: '/image/productos/prod9.jpg',
+    },
+    {
+      slug: 'bolsa-tejida-coban',
+      name: 'Bolsa tejida de Cobán',
+      description: 'Bolsa de mano tejida con técnica tradicional de Alta Verapaz. El diseño incorpora motivos de la naturaleza del bosque nuboso cobantino: quetzales, helechos y flores. Ideal para uso diario o como accesorio en ocasiones especiales.',
+      price: 380.00,
+      category: 'accesorios',
+      department: 'alta-verapaz',
+      municipality: 'coban',
+      is_traditional: true,
+      status: 'available',
+      width_cm: 30,
+      length_cm: 35,
+      size_label: 'Talla única',
+      size_notes: 'Capacidad aproximada de 5 litros. Incluye cierre interior.',
+      fabric_type: 'Algodón con hilo de seda',
+      embroidery_type: 'hand',
+      colors: ['verde', 'azul', 'dorado', 'negro'],
+      is_featured: false,
+      image: '/image/productos/prod10.jpg',
+    },
+  ]
+
+  for (const p of sampleProducts) {
+    // Buscar IDs de categoría, departamento y municipio por slug
+    const category = await prisma.category.findUnique({ where: { slug: p.category } })
+    if (!category) throw new Error(`Categoría no encontrada: ${p.category}`)
+
+    const department = p.department
+      ? await prisma.department.findUnique({ where: { slug: p.department } })
+      : null
+
+    const municipality = p.municipality
+      ? await prisma.municipality.findUnique({ where: { slug: p.municipality } })
+      : null
+
+    // Upsert del producto por slug
+    const product = await prisma.product.upsert({
+      where: { slug: p.slug },
+      update: {},
+      create: {
+        name: p.name,
+        slug: p.slug,
+        description: p.description,
+        price: p.price,
+        category_id: category.id,
+        department_id: department?.id ?? null,
+        municipality_id: municipality?.id ?? null,
+        is_traditional: p.is_traditional,
+        status: p.status as 'available' | 'sold' | 'draft' | 'coming_soon',
+        width_cm: p.width_cm ?? null,
+        length_cm: p.length_cm ?? null,
+        size_label: p.size_label ?? null,
+        size_notes: p.size_notes ?? null,
+        fabric_type: p.fabric_type ?? null,
+        embroidery_type: p.embroidery_type as 'hand' | 'machine' | 'mixed' | null ?? null,
+        colors: p.colors,
+        is_featured: p.is_featured,
+        allow_similar_request: p.allow_similar_request ?? true,
+      },
+    })
+
+    // Eliminar imágenes existentes y recrear (para que el seed sea repetible)
+    await prisma.productImage.deleteMany({ where: { product_id: product.id } })
+
+    // 5 imágenes por producto: misma foto repetida con distintos tipos
+    // mientras no hay fotos reales (ver CLAUDE.md — sección de imágenes)
+    await prisma.productImage.createMany({
+      data: [
+        { product_id: product.id, url: p.image, alt_text: p.name, position: 0, type: 'main' },
+        { product_id: product.id, url: p.image, alt_text: `${p.name} — vista plana`, position: 1, type: 'flat' },
+        { product_id: product.id, url: p.image, alt_text: `${p.name} — detalle de bordado`, position: 2, type: 'detail' },
+        { product_id: product.id, url: p.image, alt_text: `${p.name} — en modelo`, position: 3, type: 'model' },
+        { product_id: product.id, url: p.image, alt_text: `${p.name} — en modelo vista lateral`, position: 4, type: 'model' },
+      ],
+    })
+  }
+
+  console.log(`  ✓ ${sampleProducts.length} productos de prueba creados con imágenes\n`)
+
   console.log('Seed completado exitosamente.')
 }
 

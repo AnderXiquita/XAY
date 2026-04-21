@@ -475,7 +475,7 @@ function DropdownLink({ label, isActive }: { label: string; isActive?: boolean }
       <Link
         href="/tienda"
         onClick={handleClick}
-        className="flex items-center gap-1 text-base font-light transition-colors cursor-pointer"
+        className={`flex items-center gap-1 text-base font-light transition-colors cursor-pointer animated-underline animated-underline-inverse${isActive ? ' animated-underline-active' : ''}`}
         style={{
           color: baseColor,
           fontFamily: 'var(--font-body)',
@@ -598,7 +598,7 @@ function NavLink({ href, children, isActive }: { href: string; children: React.R
   return (
     <Link
       href={href}
-      className="text-base font-light transition-colors"
+      className={`text-base font-light transition-colors animated-underline animated-underline-inverse${isActive ? ' animated-underline-active' : ''}`}
       style={{
         color: baseColor,
         fontFamily: 'var(--font-body)',

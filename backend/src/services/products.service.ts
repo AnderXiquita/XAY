@@ -28,7 +28,11 @@ export async function getProducts(filters: ProductFilters) {
   }
 
   if (filters.category) {
-    where.category = { slug: filters.category }
+    // Soporta una o múltiples categorías separadas por coma: "guipiles,fajas"
+    const slugs = filters.category.split(',').map(s => s.trim()).filter(Boolean)
+    where.category = slugs.length === 1
+      ? { slug: slugs[0] }
+      : { slug: { in: slugs } }
   }
 
   if (filters.department) {
@@ -36,7 +40,10 @@ export async function getProducts(filters: ProductFilters) {
   }
 
   if (filters.municipality) {
-    where.municipality = { slug: filters.municipality }
+    const slugs = filters.municipality.split(',').map(s => s.trim()).filter(Boolean)
+    where.municipality = slugs.length === 1
+      ? { slug: slugs[0] }
+      : { slug: { in: slugs } }
   }
 
   if (filters.status && filters.status !== 'draft') {
