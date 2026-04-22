@@ -28,7 +28,13 @@ export default function ImageLightbox({
   const [zoom, setZoom] = useState(1)
   const [pan, setPan] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
-  const [visible, setVisible] = useState(false) // para la transición de entrada
+  const [visible, setVisible] = useState(false)
+
+  // Refs para gestos: manipulamos DOM directo durante el gesto, React state solo al terminar
+  const imageWrapperRef = useRef<HTMLDivElement>(null)
+  const liveZoom = useRef(1)
+  const livePan = useRef({ x: 0, y: 0 })
+  const isPinching = useRef(false)
   const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 })
   const pinchStart = useRef<{ dist: number; zoom: number } | null>(null)
 
@@ -50,8 +56,14 @@ export default function ImageLightbox({
 
   // Resetear zoom al cambiar de imagen
   useEffect(() => {
+    liveZoom.current = 1
+    livePan.current = { x: 0, y: 0 }
     setZoom(1)
     setPan({ x: 0, y: 0 })
+    if (imageWrapperRef.current) {
+      imageWrapperRef.current.style.transition = 'transform 220ms ease, opacity 280ms ease'
+      imageWrapperRef.current.style.transform = 'translate(0px, 0px) scale(1)'
+    }
   }, [currentIndex])
 
   // Teclado
@@ -80,15 +92,19 @@ export default function ImageLightbox({
   }
 
   function zoomIn() {
-    setZoom(z => Math.min(z + 0.75, 3))
+    const next = Math.min(liveZoom.current + 0.75, 3)
+    liveZoom.current = next
+    setZoom(next)
   }
 
   function zoomOut() {
-    setZoom(z => {
-      const next = Math.max(z - 0.75, 1)
-      if (next === 1) setPan({ x: 0, y: 0 })
-      return next
-    })
+    const next = Math.max(liveZoom.current - 0.75, 1)
+    liveZoom.current = next
+    if (next === 1) {
+      livePan.current = { x: 0, y: 0 }
+      setPan({ x: 0, y: 0 })
+    }
+    setZoom(next)
   }
 
   // ── MOUSE drag ──
@@ -99,13 +115,26 @@ export default function ImageLightbox({
     dragStart.current = { x: e.clientX, y: e.clientY, panX: pan.x, panY: pan.y }
   }
 
-  function clampPan(x: number, y: number) {
-    // Límite máximo de desplazamiento: la mitad del tamaño extra que añade el zoom
-    const maxX = (window.innerWidth * (zoom - 1)) / 2
-    const maxY = (window.innerHeight * (zoom - 1)) / 2
+  // Clamp basado en el tamaño real renderizado de la imagen (no el viewport completo)
+  function clampPan(z: number, x: number, y: number) {
+    const el = imageWrapperRef.current
+    const imgW = el ? el.offsetWidth : window.innerWidth * 0.88
+    const imgH = el ? el.offsetHeight : window.innerHeight * 0.74
+    const maxX = Math.max(0, (imgW * z - window.innerWidth) / 2)
+    const maxY = Math.max(0, (imgH * z - window.innerHeight) / 2)
     return {
       x: Math.max(-maxX, Math.min(maxX, x)),
       y: Math.max(-maxY, Math.min(maxY, y)),
+    }
+  }
+
+  // Aplica transform directo al DOM — sin pasar por React, sin transition durante el gesto
+  function applyLiveTransform(z: number, x: number, y: number) {
+    liveZoom.current = z
+    livePan.current = { x, y }
+    if (imageWrapperRef.current) {
+      imageWrapperRef.current.style.transition = 'none'
+      imageWrapperRef.current.style.transform = `translate(${x}px, ${y}px) scale(${z})`
     }
   }
 
@@ -115,10 +144,18 @@ export default function ImageLightbox({
       x: dragStart.current.panX + (e.clientX - dragStart.current.x),
       y: dragStart.current.panY + (e.clientY - dragStart.current.y),
     }
-    setPan(clampPan(raw.x, raw.y))
+    const clamped = clampPan(liveZoom.current, raw.x, raw.y)
+    applyLiveTransform(liveZoom.current, clamped.x, clamped.y)
   }
 
   function onMouseUp() {
+    if (isDragging) {
+      setPan(livePan.current)
+      // Restaura transition suave después del drag
+      if (imageWrapperRef.current) {
+        imageWrapperRef.current.style.transition = 'transform 220ms ease, opacity 280ms ease'
+      }
+    }
     setIsDragging(false)
   }
 
@@ -131,41 +168,50 @@ export default function ImageLightbox({
 
   function onTouchStart(e: React.TouchEvent) {
     if (e.touches.length === 2) {
-      // Inicio de pinch — guardamos distancia inicial y zoom actual
-      pinchStart.current = { dist: getTouchDist(e.touches), zoom }
+      isPinching.current = true
+      pinchStart.current = { dist: getTouchDist(e.touches), zoom: liveZoom.current }
       setIsDragging(false)
       return
     }
-    // Un solo dedo — drag (solo si hay zoom)
-    if (zoom <= 1) return
+    if (liveZoom.current <= 1) return
     const t = e.touches[0]
-    dragStart.current = { x: t.clientX, y: t.clientY, panX: pan.x, panY: pan.y }
+    dragStart.current = { x: t.clientX, y: t.clientY, panX: livePan.current.x, panY: livePan.current.y }
     setIsDragging(true)
   }
 
   function onTouchMove(e: React.TouchEvent) {
     e.preventDefault()
     if (e.touches.length === 2 && pinchStart.current) {
-      // Pinch zoom: escalar zoom proporcionalmente a la distancia entre dedos
       const newDist = getTouchDist(e.touches)
       const scale = newDist / pinchStart.current.dist
       const newZoom = Math.max(1, Math.min(3, pinchStart.current.zoom * scale))
-      setZoom(newZoom)
-      if (newZoom === 1) setPan({ x: 0, y: 0 })
+      const clamped = clampPan(newZoom, livePan.current.x, livePan.current.y)
+      applyLiveTransform(newZoom, clamped.x, clamped.y)
       return
     }
-    // Un solo dedo — drag
     if (!isDragging) return
     const t = e.touches[0]
     const raw = {
       x: dragStart.current.panX + (t.clientX - dragStart.current.x),
       y: dragStart.current.panY + (t.clientY - dragStart.current.y),
     }
-    setPan(clampPan(raw.x, raw.y))
+    const clamped = clampPan(liveZoom.current, raw.x, raw.y)
+    applyLiveTransform(liveZoom.current, clamped.x, clamped.y)
   }
 
   function onTouchEnd(e: React.TouchEvent) {
-    if (e.touches.length < 2) pinchStart.current = null
+    if (e.touches.length < 2 && isPinching.current) {
+      isPinching.current = false
+      pinchStart.current = null
+      // Commit al state React y restaura transition
+      const z = liveZoom.current
+      const p = livePan.current
+      setZoom(z)
+      setPan(z <= 1 ? { x: 0, y: 0 } : p)
+      if (imageWrapperRef.current) {
+        imageWrapperRef.current.style.transition = 'transform 220ms ease, opacity 280ms ease'
+      }
+    }
     if (e.touches.length === 0) setIsDragging(false)
   }
 
@@ -254,11 +300,12 @@ export default function ImageLightbox({
         )}
 
         <div
+          ref={imageWrapperRef}
           style={{
             transform: `translate(${pan.x}px, ${pan.y}px) scale(${zoom})`,
             transformOrigin: 'center center',
             opacity: visible ? 1 : 0,
-            transition: isDragging ? 'opacity 280ms ease' : 'transform 220ms ease, opacity 280ms ease',
+            transition: 'transform 220ms ease, opacity 280ms ease',
           }}
         >
           <Image

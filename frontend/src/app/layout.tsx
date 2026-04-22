@@ -22,7 +22,7 @@ const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
-  weight: ['300', '400', '500', '600'],
+  weight: ['200', '300', '400', '500', '600'],
 })
 
 /* ============================================

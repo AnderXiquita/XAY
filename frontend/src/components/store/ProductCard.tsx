@@ -20,14 +20,26 @@ function StatusBadge({ status }: { status: Product['status'] }) {
     draft: 'Borrador',
   }
 
+  const soldStyle = {
+    backgroundColor: 'rgba(255, 251, 244, 0.08)',
+    backdropFilter: 'blur(2px)',
+    WebkitBackdropFilter: 'blur(2px)',
+    color: 'rgba(255, 251, 244, 0.75)',
+  }
+
+  const defaultStyle = {
+    backgroundColor: 'var(--color-accent)',
+    color: 'var(--color-text-inverse)',
+  }
+
   return (
     <span
-      className="absolute top-3 left-3 z-10 px-3 py-1 text-xs font-medium rounded-full"
+      className="absolute top-3 left-3 z-10 px-4 py-1.5 text-xs rounded-full"
       style={{
         fontFamily: 'var(--font-body)',
-        backgroundColor: status === 'sold' ? 'var(--color-text-primary)' : 'var(--color-accent)',
-        color: 'var(--color-text-inverse)',
-        letterSpacing: '0.05em',
+        fontWeight: status === 'sold' ? 200 : 500,
+        letterSpacing: '0.08em',
+        ...(status === 'sold' ? soldStyle : defaultStyle),
       }}
     >
       {labels[status] ?? status}
