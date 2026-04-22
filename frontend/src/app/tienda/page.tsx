@@ -413,10 +413,16 @@ export default function TiendaPage() {
         </div>
       </div>
 
-      {/* ── LIMPIAR FILTROS ── */}
-      {hasActiveFilters && (
-        <>
-          <div style={{ height: '1px', backgroundColor: 'var(--color-border)' }} />
+      {/* ── LIMPIAR FILTROS ── mismo patrón que los filtros colapsables */}
+      <div style={{
+        display: 'grid',
+        gridTemplateRows: hasActiveFilters ? '1fr' : '0fr',
+        opacity: hasActiveFilters ? 1 : 0,
+        marginTop: hasActiveFilters ? '1rem' : '0',
+        transition: 'grid-template-rows 300ms ease, opacity 250ms ease, margin-top 300ms ease',
+      }}>
+        <div style={{ minHeight: 0, overflow: 'hidden' }}>
+          <div style={{ height: '1px', backgroundColor: 'var(--color-border)', marginBottom: '12px' }} />
           <button
             onClick={clearFilters}
             className="w-full py-2 text-sm rounded-lg"
@@ -441,8 +447,8 @@ export default function TiendaPage() {
           >
             Limpiar filtros
           </button>
-        </>
-      )}
+        </div>
+      </div>
     </div>
   )
 
@@ -686,7 +692,6 @@ export default function TiendaPage() {
           style={{
             backgroundColor: 'var(--color-bg)',
             maxHeight: '85vh',
-            boxShadow: '0 -8px 32px rgba(9,31,44,0.15)',
             transform: filtersOpen ? 'translateY(0)' : 'translateY(100%)',
             transition: 'transform 400ms cubic-bezier(0.32, 0.72, 0, 1)',
             pointerEvents: filtersOpen ? 'auto' : 'none',

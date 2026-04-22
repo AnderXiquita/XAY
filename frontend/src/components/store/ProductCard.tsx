@@ -85,9 +85,16 @@ function CardIconButton({
     style.pointerEvents = isCardHovered ? 'auto' : 'none'
   }
 
+  function handleTouchEnd(e: React.TouchEvent) {
+    e.preventDefault()
+    e.stopPropagation()
+    onClick(e as unknown as React.MouseEvent)
+  }
+
   return (
     <button
       onClick={onClick}
+      onTouchEnd={handleTouchEnd}
       aria-label={ariaLabel}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -133,11 +140,13 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
 
   function toggleFavorite(e: React.MouseEvent) {
     e.preventDefault()
+    e.stopPropagation()
     setIsFavorite(prev => !prev)
   }
 
   function openLightbox(e: React.MouseEvent) {
     e.preventDefault()
+    e.stopPropagation()
     setLightboxOpen(true)
   }
 
