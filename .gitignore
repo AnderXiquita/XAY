@@ -31,3 +31,8 @@ postgres_data/
 
 # Misc
 *.tsbuildinfo
+
+# Claude Code (local, no subir)
+.claude/
+skills/
+CLAUDE.md
