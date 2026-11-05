@@ -15,9 +15,18 @@ app.use(helmet())
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
 app.use(express.json())
 
-// Health check
+// Health check — también es el endpoint que el monitor externo pinguea cada pocos
+// minutos para que Render (plan free) no duerma el servicio por inactividad.
+// IMPORTANTE: no consultar la base de datos aquí. Si el ping tocara la BD, Neon
+// nunca se suspendería y se consumirían las horas de cómputo del plan gratuito.
+// Express responde HEAD automáticamente con este mismo handler.
 app.get('/api/v1/health', (_req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+  res.set('Cache-Control', 'no-store')
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime_seconds: Math.round(process.uptime()),
+  })
 })
 
 // Rutas públicas
