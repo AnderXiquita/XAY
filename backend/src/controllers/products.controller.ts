@@ -18,3 +18,15 @@ export async function getProductBySlug(req: Request, res: Response, next: NextFu
     next(error)
   }
 }
+
+export async function getRelatedProducts(req: Request, res: Response, next: NextFunction) {
+  try {
+    const result = await ProductService.getRelatedProducts(
+      String(req.params['slug'] ?? ''),
+      typeof req.query['limit'] === 'string' ? req.query['limit'] : undefined,
+    )
+    res.json(result)
+  } catch (error) {
+    next(error)
+  }
+}

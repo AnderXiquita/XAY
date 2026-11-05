@@ -146,3 +146,54 @@ export async function getProductBySlug(slug: string) {
 
   return product
 }
+
+// Piezas relacionadas para la sección del final del detalle de producto.
+// Lo que conecta las piezas es su origen: primero se buscan otras del mismo departamento.
+// Si no alcanzan, se completa con la misma categoría y luego con piezas del mismo tipo
+// (típica o complemento moderno), para que la sección nunca quede vacía o con una sola card.
+// `basis` le dice al frontend qué título usar: 'department' = todas son del mismo departamento.
+export async function getRelatedProducts(slug: string, rawLimit?: string) {
+  const limit = Math.min(12, Math.max(1, parseInt(rawLimit || '4') || 4))
+
+  const product = await prisma.product.findUnique({
+    where: { slug },
+    select: { id: true, status: true, department_id: true, category_id: true, is_traditional: true },
+  })
+
+  if (!product || product.status === 'draft') {
+    throw new AppError('Producto no encontrado', 404, 'PRODUCT_NOT_FOUND')
+  }
+
+  const tiers = [
+    product.department_id !== null ? { department_id: product.department_id } : null,
+    { category_id: product.category_id },
+    { is_traditional: product.is_traditional },
+  ].filter((t) => t !== null)
+
+  const related: Awaited<ReturnType<typeof findRelated>> = []
+  for (const tier of tiers) {
+    if (related.length >= limit) break
+    const found = await findRelated(tier, [product.id, ...related.map((p) => p.id)], limit - related.length)
+    related.push(...found)
+  }
+
+  const allSameDepartment = product.department_id !== null
+    && related.length > 0
+    && related.every((p) => p.department_id === product.department_id)
+
+  return { data: related, basis: allSameDepartment ? 'department' as const : 'similar' as const }
+}
+
+function findRelated(where: Record<string, unknown>, excludeIds: string[], take: number) {
+  return prisma.product.findMany({
+    where: { ...where, id: { notIn: excludeIds }, status: { not: 'draft' } },
+    include: {
+      images: { orderBy: { position: 'asc' } },
+      category: { select: { id: true, name: true, slug: true } },
+      municipality: { select: { id: true, name: true, slug: true } },
+      department: { select: { id: true, name: true, slug: true } },
+    },
+    orderBy: [{ is_featured: 'desc' }, { created_at: 'desc' }],
+    take,
+  })
+}

@@ -135,6 +135,14 @@ enum ImageType {
   flat
 }
 
+// Formato del archivo: foto o video
+enum MediaType {
+  image
+  video
+}
+
+// Galería del producto. A pesar del nombre, guarda fotos y videos:
+// `media_type` dice qué es, `type` dice qué muestra (plana, detalle, modelo...)
 model ProductImage {
   id         String    @id @default(uuid())
   product_id String
@@ -143,7 +151,13 @@ model ProductImage {
   alt_text   String?
   position   Int       @default(0)
   type       ImageType @default(flat)
+  media_type MediaType @default(image)
+  // Solo videos: imagen que se muestra mientras el video carga
+  poster_url String?
+  // ID del archivo en Cloudinary — para reemplazarlo o borrarlo desde el admin
+  public_id  String?
 
+  @@index([product_id, position])
   @@map("product_images")
 }
 

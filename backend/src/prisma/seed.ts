@@ -771,16 +771,38 @@ async function main() {
     // Eliminar imágenes existentes y recrear (para que el seed sea repetible)
     await prisma.productImage.deleteMany({ where: { product_id: product.id } })
 
-    // 5 imágenes por producto: misma foto repetida con distintos tipos
+    // 6 imágenes por producto: misma foto repetida con distintos tipos
     // mientras no hay fotos reales (ver CLAUDE.md — sección de imágenes)
+    type SeedMedia = {
+      url: string
+      alt_text: string
+      type: 'main' | 'flat' | 'detail' | 'model'
+      media_type: 'image' | 'video'
+      poster_url: string | null
+    }
+    const media: SeedMedia[] = [
+      { url: p.image, alt_text: p.name, type: 'main' as const },
+      { url: p.image, alt_text: `${p.name} — vista plana`, type: 'flat' as const },
+      { url: p.image, alt_text: `${p.name} — detalle de bordado`, type: 'detail' as const },
+      { url: p.image, alt_text: `${p.name} — en modelo`, type: 'model' as const },
+      { url: p.image, alt_text: `${p.name} — en modelo vista lateral`, type: 'model' as const },
+      { url: p.image, alt_text: `${p.name} — detalle del tejido`, type: 'detail' as const },
+    ].map((m) => ({ ...m, media_type: 'image' as const, poster_url: null }))
+
+    // Los productos 1 a 5 llevan además un video en la segunda posición (7 elementos en total),
+    // así se pueden probar galerías con cantidad par (6) e impar (7)
+    if (/prod[1-5]\.jpg$/.test(p.image)) {
+      media.splice(1, 0, {
+        url: p.image.replace('/image/', '/video/').replace('.jpg', '.mp4'),
+        alt_text: `${p.name} — video en modelo`,
+        type: 'model',
+        media_type: 'video',
+        poster_url: p.image,
+      })
+    }
+
     await prisma.productImage.createMany({
-      data: [
-        { product_id: product.id, url: p.image, alt_text: p.name, position: 0, type: 'main' },
-        { product_id: product.id, url: p.image, alt_text: `${p.name} — vista plana`, position: 1, type: 'flat' },
-        { product_id: product.id, url: p.image, alt_text: `${p.name} — detalle de bordado`, position: 2, type: 'detail' },
-        { product_id: product.id, url: p.image, alt_text: `${p.name} — en modelo`, position: 3, type: 'model' },
-        { product_id: product.id, url: p.image, alt_text: `${p.name} — en modelo vista lateral`, position: 4, type: 'model' },
-      ],
+      data: media.map((m, position) => ({ ...m, product_id: product.id, position })),
     })
   }
 

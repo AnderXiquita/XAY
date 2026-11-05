@@ -141,8 +141,9 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
   const [isCardHovered, setIsCardHovered] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
-  const mainImage =
-    product.images.find((img) => img.type === 'main') ?? product.images[0]
+  // La card y su lightbox solo muestran fotos; los videos se ven en el detalle del producto
+  const photos = product.images.filter((img) => img.media_type === 'image')
+  const mainImage = photos.find((img) => img.type === 'main') ?? photos[0]
 
   const origin = product.municipality
     ? `${product.municipality.name}, ${product.department?.name ?? ''}`
@@ -260,9 +261,9 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
           </div>
         </article>
 
-        {lightboxOpen && product.images.length > 0 && (
+        {lightboxOpen && photos.length > 0 && (
           <ImageLightbox
-            images={product.images}
+            images={photos}
             initialIndex={0}
             productName={product.name}
             productSlug={product.slug}
@@ -387,9 +388,9 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
       </Link>
 
       {/* Lightbox — fuera del Link para evitar navegación accidental */}
-      {lightboxOpen && product.images.length > 0 && (
+      {lightboxOpen && photos.length > 0 && (
         <ImageLightbox
-          images={product.images}
+          images={photos}
           initialIndex={0}
           productName={product.name}
           productSlug={product.slug}

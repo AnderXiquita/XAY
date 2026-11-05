@@ -128,6 +128,45 @@ body {
 }
 
 /* ============================================
+   TRANSICIÓN ENTRE PANTALLAS — ver PageTransition.tsx
+   Solo opacidad (nunca transform: rompería los position: fixed de las páginas).
+   `backwards`: al terminar no deja estilos aplicados, así no queda un stacking context permanente.
+   ============================================ */
+
+.page-transition {
+  animation: fadeIn 450ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .page-transition {
+    animation: none;
+  }
+}
+
+/* ============================================
+   BARRA DE ACCIÓN MOBILE — sigue al BottomNav
+   Con el BottomNav visible se apoya encima de él (64px + zona segura del iPhone).
+   Cuando el BottomNav se esconde al hacer scroll, baja al borde de la pantalla y ocupa su lugar.
+   Misma duración y curva que el BottomNav para que se muevan juntos.
+   BottomNav publica su estado en <html data-bottom-nav="visible|hidden">.
+   ============================================ */
+
+.mobile-action-bar {
+  bottom: calc(64px + env(safe-area-inset-bottom, 0px));
+  padding-top: 12px;
+  padding-bottom: 12px;
+  transition:
+    bottom 300ms cubic-bezier(0.4, 0, 0.2, 1),
+    padding-bottom 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+html[data-bottom-nav='hidden'] .mobile-action-bar {
+  bottom: 0;
+  /* Ahora toca el borde: deja aire para la barra de gestos del iPhone */
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+}
+
+/* ============================================
    SHIMMER — Efecto de carga tipo Netflix/YouTube.
    Se usa en ImageWithSkeleton mientras la imagen carga.
    ============================================ */
