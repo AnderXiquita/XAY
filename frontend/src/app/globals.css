@@ -303,3 +303,13 @@ html[data-bottom-nav='hidden'] .mobile-action-bar {
     min-height: calc(100svh - 129px);
   }
 }
+
+@media (max-width: 1023px) and (max-height: 700px) {
+  .auth-shell {
+    --auth-hero-min: 150px;
+  }
+
+  .auth-subtitle {
+    display: none;
+  }
+}

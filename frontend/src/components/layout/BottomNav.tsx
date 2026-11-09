@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useProfileInitial } from '@/lib/useProfileInitial'
+import { useFavorites } from '@/components/favorites/FavoritesProvider'
 
 export default function BottomNav() {
   const pathname = usePathname()
   const initial = useProfileInitial()
+  const favoritesCount = useFavorites().ids.length
   const [visible, setVisible] = useState(true)
   const lastScrollY = useRef(0)
   const ticking = useRef(false)
@@ -67,7 +69,7 @@ export default function BottomNav() {
         <NavItem href="/" isActive={isHome} badge={undefined}>
           <HomeIcon active={isHome} />
         </NavItem>
-        <NavItem href="/favoritos" isActive={isFavoritos} badge={0}>
+        <NavItem href="/favoritos" isActive={isFavoritos} badge={favoritesCount}>
           <HeartIcon active={isFavoritos} />
         </NavItem>
         <NavItem href="/carrito" isActive={isCarrito} badge={0}>

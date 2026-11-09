@@ -4,6 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useState } from 'react'
 import type { Product } from '@/lib/api'
+import { useFavorites } from '@/components/favorites/FavoritesProvider'
 import ImageLightbox from './ImageLightbox'
 
 interface ProductCardProps {
@@ -137,7 +138,8 @@ function EyeSVG() {
 }
 
 export default function ProductCard({ product, listMode = false }: ProductCardProps) {
-  const [isFavorite, setIsFavorite] = useState(false)
+  const favorites = useFavorites()
+  const isFavorite = favorites.isFavorite(product.id)
   const [isCardHovered, setIsCardHovered] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
@@ -153,7 +155,7 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
   function toggleFavorite(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
-    setIsFavorite(prev => !prev)
+    favorites.toggle(product.id)
   }
 
   function openLightbox(e: React.MouseEvent) {
@@ -267,7 +269,7 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
             productName={product.name}
             productSlug={product.slug}
             isFavorite={isFavorite}
-            onToggleFavorite={() => setIsFavorite(prev => !prev)}
+            onToggleFavorite={() => favorites.toggle(product.id)}
             onClose={() => setLightboxOpen(false)}
           />
         )}
@@ -394,7 +396,7 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
           productName={product.name}
           productSlug={product.slug}
           isFavorite={isFavorite}
-          onToggleFavorite={() => setIsFavorite(prev => !prev)}
+          onToggleFavorite={() => favorites.toggle(product.id)}
           onClose={() => setLightboxOpen(false)}
         />
       )}

@@ -4,10 +4,12 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { useProfileInitial } from '@/lib/useProfileInitial'
+import { useFavorites } from '@/components/favorites/FavoritesProvider'
 
 export default function Header() {
   const pathname = usePathname()
   const initial = useProfileInitial()
+  const favoritesCount = useFavorites().ids.length
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -141,25 +143,28 @@ export default function Header() {
               </div>
               {/* Favoritos */}
               <div className="relative">
-                <IconButton label="Favoritos">
+                <IconButton label="Favoritos" href="/favoritos">
                   <HeartIcon />
                 </IconButton>
-                <span
-                  className="absolute flex items-center justify-center rounded-full pointer-events-none"
-                  style={{
-                    top: '4px',
-                    right: '4px',
-                    width: '16px',
-                    height: '16px',
-                    backgroundColor: 'var(--color-accent)',
-                    color: 'var(--color-text-inverse)',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '10px',
-                    fontWeight: 500,
-                  }}
-                >
-                  0
-                </span>
+                {favoritesCount > 0 && (
+                  <span
+                    className="absolute flex items-center justify-center rounded-full pointer-events-none"
+                    style={{
+                      top: '4px',
+                      right: '4px',
+                      minWidth: '16px',
+                      height: '16px',
+                      padding: '0 3px',
+                      backgroundColor: 'var(--color-text-inverse)',
+                      color: 'var(--color-text-primary)',
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {favoritesCount > 9 ? '9+' : favoritesCount}
+                  </span>
+                )}
               </div>
               <IconButton label="Mi cuenta" href="/cuenta">
                 {initial ? (

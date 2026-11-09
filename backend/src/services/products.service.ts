@@ -12,6 +12,7 @@ interface ProductFilters {
   is_featured?: string
   search?: string
   sort?: string        // 'newest' | 'price_asc' | 'price_desc' | 'featured'
+  ids?: string        // ids separados por coma (favoritos de invitados)
   page?: string
   limit?: string
 }
@@ -62,6 +63,10 @@ export async function getProducts(filters: ProductFilters) {
     if (filters.max_price) {
       (where.price as Record<string, unknown>).lte = parseFloat(filters.max_price)
     }
+  }
+
+  if (filters.ids) {
+    where.id = { in: filters.ids.split(',').map((id) => id.trim()).filter(Boolean).slice(0, 50) }
   }
 
   if (filters.is_featured === 'true') {

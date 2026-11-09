@@ -86,6 +86,7 @@ export interface ProductFilters {
   max_price?: string
   is_featured?: string
   search?: string
+  ids?: string
   sort?: 'newest' | 'price_asc' | 'price_desc' | 'featured'
   page?: number
   limit?: number
@@ -318,3 +319,18 @@ export const setDefaultAddressRequest = (token: string, id: string) =>
 
 export const deleteAddressRequest = (token: string, id: string) =>
   authed<void>(token, `/users/me/addresses/${encodeURIComponent(id)}`, { method: 'DELETE' })
+
+// ============================================
+// FAVORITOS (con sesión; los invitados los guardan en el navegador)
+// ============================================
+
+export const getFavoriteIds = (token: string) => authed<string[]>(token, '/favorites/ids')
+
+export const addFavoriteRequest = (token: string, productId: string) =>
+  authed<void>(token, `/favorites/${encodeURIComponent(productId)}`, { method: 'PUT' })
+
+export const removeFavoriteRequest = (token: string, productId: string) =>
+  authed<void>(token, `/favorites/${encodeURIComponent(productId)}`, { method: 'DELETE' })
+
+export const mergeFavoritesRequest = (token: string, productIds: string[]) =>
+  authed<string[]>(token, '/favorites/merge', { method: 'POST', body: { product_ids: productIds } })

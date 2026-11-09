@@ -126,6 +126,7 @@ model Product {
   order_items     OrderItem[]
   cart_items      CartItem[]
   similar_requests SimilarRequest[]
+  favorites       Favorite[]
 
   @@map("products")
 }
@@ -197,8 +198,24 @@ model User {
   cart_items       CartItem[]
   similar_requests SimilarRequest[]
   addresses        Address[]
+  favorites        Favorite[]
 
   @@map("users")
+}
+
+// quitar un favorito solo lo desactiva (regla: nada se borra físicamente)
+model Favorite {
+  id         String   @id @default(uuid())
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  product_id String
+  product    Product  @relation(fields: [product_id], references: [id])
+  is_active  Boolean  @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([user_id, product_id])
+  @@map("favorites")
 }
 
 // libreta de direcciones; al hacer un pedido se copia a Order.shipping_address

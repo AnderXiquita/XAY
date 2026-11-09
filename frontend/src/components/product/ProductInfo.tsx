@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Product } from '@/lib/api'
+import { useFavorites } from '@/components/favorites/FavoritesProvider'
 import { formatCm, formatPrice } from '@/lib/format'
 
 const EMBROIDERY_LABELS: Record<NonNullable<Product['embroidery_type']>, string> = {
@@ -15,7 +16,8 @@ function capitalize(text: string) {
 }
 
 export default function ProductInfo({ product }: { product: Product }) {
-  const [isFavorite, setIsFavorite] = useState(false)
+  const favorites = useFavorites()
+  const isFavorite = favorites.isFavorite(product.id)
 
   const origin = product.municipality
     ? `${product.municipality.name}, ${product.department?.name ?? ''}`
@@ -77,7 +79,7 @@ export default function ProductInfo({ product }: { product: Product }) {
       )}
 
       <div className="hidden lg:flex gap-3 py-5 border-t" style={{ borderColor: 'var(--color-border)' }}>
-        <FavoriteButton isFavorite={isFavorite} onToggle={() => setIsFavorite((f) => !f)} />
+        <FavoriteButton isFavorite={isFavorite} onToggle={() => favorites.toggle(product.id)} />
         <PrimaryAction product={product} />
       </div>
 
@@ -138,7 +140,7 @@ export default function ProductInfo({ product }: { product: Product }) {
           borderColor: 'var(--color-border)',
         }}
       >
-        <FavoriteButton isFavorite={isFavorite} onToggle={() => setIsFavorite((f) => !f)} />
+        <FavoriteButton isFavorite={isFavorite} onToggle={() => favorites.toggle(product.id)} />
         <PrimaryAction product={product} />
       </div>
     </div>
