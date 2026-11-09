@@ -3,7 +3,7 @@
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { loginRequest, registerRequest, type AuthResult } from '@/lib/api'
-import { SESSION_COOKIE, SESSION_MAX_AGE, safeNext } from '@/lib/auth-cookie'
+import { PROFILE_COOKIE, SESSION_COOKIE, SESSION_MAX_AGE, initialOf, safeNext } from '@/lib/auth-cookie'
 
 export interface AuthFormState {
   error?: string
@@ -22,13 +22,10 @@ async function finish(result: AuthResult, next: string, values: AuthFormState['v
     return details ? { fieldErrors: details, values } : { error, values }
   }
 
-  ;(await cookies()).set(SESSION_COOKIE, result.token, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
-    path: '/',
-    maxAge: SESSION_MAX_AGE,
-  })
+  const store = await cookies()
+  const options = { secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const, path: '/', maxAge: SESSION_MAX_AGE }
+  store.set(SESSION_COOKIE, result.token, { ...options, httpOnly: true })
+  store.set(PROFILE_COOKIE, initialOf(result.user.name), options)
 
   redirect(next)
 }
@@ -43,10 +40,14 @@ export async function registerAction(_prev: AuthFormState, formData: FormData): 
   const name = field(formData, 'name')
   const email = field(formData, 'email')
   const result = await registerRequest({ name, email, password: field(formData, 'password') })
-  return finish(result, safeNext(formData.get('next')), { name, email })
+  const next = safeNext(formData.get('next'))
+  const welcome = next === '/cuenta' ? '/bienvenida' : `/bienvenida?next=${encodeURIComponent(next)}`
+  return finish(result, welcome, { name, email })
 }
 
 export async function logoutAction() {
-  ;(await cookies()).delete(SESSION_COOKIE)
+  const store = await cookies()
+  store.delete(SESSION_COOKIE)
+  store.delete(PROFILE_COOKIE)
   redirect('/')
 }

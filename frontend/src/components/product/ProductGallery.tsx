@@ -6,16 +6,17 @@ import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton'
 import ProductVideo from './ProductVideo'
 import ProductLightbox from './ProductLightbox'
 
-const SLIDE_GAP = 6
+const SLIDE_GAP = 6 
 
 interface ProductGalleryProps {
   media: ProductImage[]
   productName: string
 }
 
+
 export default function ProductGallery({ media, productName }: ProductGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [progress, setProgress] = useState(0)
+  const [progress, setProgress] = useState(0) // 0 → 1 según el scroll del carrusel
   const [activeIndex, setActiveIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
 
@@ -38,13 +39,15 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
     const max = el.scrollWidth - el.clientWidth
     setProgress(max > 0 ? el.scrollLeft / max : 0)
 
+  
     const slide = el.firstElementChild as HTMLElement | null
     const step = slide ? slide.offsetWidth + SLIDE_GAP : el.clientWidth
+    // La última foto nunca llega a pegarse a la izquierda: si ya no se puede avanzar, es la última
     const index = el.scrollLeft >= max - 2 ? media.length - 1 : Math.round(el.scrollLeft / step)
     setActiveIndex(index)
   }
 
-  // div y no button porque el video trae su propio botón
+  // Contenedor clickeable. Es un div (no <button>) porque el video lleva su propio botón de sonido adentro
   function tileProps(index: number) {
     return {
       role: 'button' as const,
@@ -69,7 +72,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
         alt={item.alt_text ?? productName}
         fill
         sizes={sizes}
-        // eager por Lenis (ver CLAUDE.md)
+        // Lenis interfiere con el lazy loading (ver CLAUDE.md): la primera con prioridad, el resto eager
         priority={index === 0}
         loading={index === 0 ? undefined : 'eager'}
         className="object-cover"
@@ -79,6 +82,9 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
 
   return (
     <>
+      {/* ── MOBILE: carrusel ──
+          Las fotos no ocupan todo el ancho: se asoma la siguiente (invita a deslizar) y la altura
+          tiene tope para que el nombre y el precio se vean al entrar, sin hacer scroll. */}
       <div className="lg:hidden">
         <div
           ref={carouselRef}
@@ -93,6 +99,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
               {...tileProps(i)}
               className="relative shrink-0 snap-start overflow-hidden"
               style={{
+                // Alto = 46% de la pantalla (máx. el ancho); el ancho sale solo por la proporción 3:4
                 height: 'min(46svh, 100vw)',
                 aspectRatio: '3/4',
                 borderRadius: '6px',
@@ -105,6 +112,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
           ))}
         </div>
 
+        {/* Barra de progreso: el tramo oscuro avanza conforme se arrastra */}
         {media.length > 1 && (
           <div className="flex items-center gap-3 px-4 mt-2">
             <div className="relative flex-1 overflow-hidden rounded-full" style={{ height: '3px', backgroundColor: 'var(--color-border)' }}>
@@ -124,6 +132,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
         )}
       </div>
 
+      {/* ── DESKTOP: grid en pares ── */}
       <div className="hidden lg:grid grid-cols-2 gap-2">
         {media.map((item, i) => {
           const isHero = isOdd && i === 0
@@ -133,6 +142,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
               {...tileProps(i)}
               className={`group relative overflow-hidden ${isHero ? 'col-span-2' : ''}`}
               style={{
+                // La foto ancha tiene la misma altura que una fila de pares (2 × 4:5 = 8:5)
                 aspectRatio: isHero ? '8/5' : '4/5',
                 backgroundColor: 'var(--color-surface)',
                 borderRadius: '6px',

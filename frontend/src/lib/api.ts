@@ -189,6 +189,7 @@ export interface User {
   email: string
   name: string
   phone: string | null
+  birth_date: string | null
   role: 'customer' | 'admin' | 'vendor'
   created_at: string
 }
@@ -240,3 +241,80 @@ export async function getMe(token: string): Promise<User | null> {
     return null
   }
 }
+
+// ============================================
+// MI CUENTA (requieren token)
+// ============================================
+
+export interface Address {
+  id: string
+  label: string
+  recipient_name: string
+  phone: string
+  zone: string | null
+  address_line: string
+  reference: string | null
+  is_default: boolean
+  department: { id: number; name: string }
+  municipality: { id: number; name: string }
+}
+
+export type ApiResult<T> = { ok: true; data: T } | { ok: false; status: number; error: ApiError }
+
+async function authed<T>(token: string, path: string, init: { method?: string; body?: unknown } = {}): Promise<ApiResult<T>> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1${path}`, {
+      method: init.method ?? 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        ...(init.body !== undefined && { 'Content-Type': 'application/json' }),
+      },
+      ...(init.body !== undefined && { body: JSON.stringify(init.body) }),
+      cache: 'no-store',
+    })
+    if (res.status === 204) return { ok: true, data: undefined as T }
+    const json = await res.json()
+    if (!res.ok) return { ok: false, status: res.status, error: json as ApiError }
+    return { ok: true, data: (json as { data: T }).data }
+  } catch {
+    return { ok: false, status: 0, error: { error: 'No pudimos conectar con el servidor. Inténtalo de nuevo.', code: 'NETWORK_ERROR' } }
+  }
+}
+
+export interface ProfileInput {
+  name: string
+  phone: string
+  birth_date: string
+}
+
+export interface AddressFormInput {
+  label: string
+  recipient_name: string
+  phone: string
+  department_id: string
+  municipality_id: string
+  zone: string
+  address_line: string
+  reference: string
+  is_default?: boolean
+}
+
+export const updateProfileRequest = (token: string, body: ProfileInput) =>
+  authed<User>(token, '/users/me', { method: 'PATCH', body })
+
+export const changePasswordRequest = (token: string, body: { current_password: string; new_password: string }) =>
+  authed<void>(token, '/users/me/password', { method: 'PATCH', body })
+
+export const getAddresses = (token: string) => authed<Address[]>(token, '/users/me/addresses')
+
+export const createAddressRequest = (token: string, body: AddressFormInput) =>
+  authed<Address>(token, '/users/me/addresses', { method: 'POST', body })
+
+export const updateAddressRequest = (token: string, id: string, body: AddressFormInput) =>
+  authed<Address>(token, `/users/me/addresses/${encodeURIComponent(id)}`, { method: 'PATCH', body })
+
+export const setDefaultAddressRequest = (token: string, id: string) =>
+  authed<void>(token, `/users/me/addresses/${encodeURIComponent(id)}/default`, { method: 'POST' })
+
+export const deleteAddressRequest = (token: string, id: string) =>
+  authed<void>(token, `/users/me/addresses/${encodeURIComponent(id)}`, { method: 'DELETE' })

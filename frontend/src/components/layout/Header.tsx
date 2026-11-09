@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
+import { useProfileInitial } from '@/lib/useProfileInitial'
 
 export default function Header() {
   const pathname = usePathname()
+  const initial = useProfileInitial()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -160,7 +162,16 @@ export default function Header() {
                 </span>
               </div>
               <IconButton label="Mi cuenta" href="/cuenta">
-                <UserIcon />
+                {initial ? (
+                  <span
+                    className="flex items-center justify-center rounded-full"
+                    style={{ width: '28px', height: '28px', backgroundColor: 'var(--color-text-inverse)', color: 'var(--color-text-primary)', fontSize: '0.8rem', fontWeight: 600 }}
+                  >
+                    {initial}
+                  </span>
+                ) : (
+                  <UserIcon />
+                )}
               </IconButton>
               {/* Carrito */}
               <div className="relative">

@@ -4,16 +4,17 @@ import { AppError } from '../lib/AppError.js'
 import { signToken } from '../lib/jwt.js'
 import type { LoginInput, RegisterInput } from '../schemas/auth.schema.js'
 
-const SALT_ROUNDS = 12
+export const SALT_ROUNDS = 12
 
 // para que un correo inexistente tarde lo mismo que una contraseña incorrecta
 const DUMMY_HASH = bcrypt.hashSync('dummy-password-xay', SALT_ROUNDS)
 
-const publicUserSelect = {
+export const publicUserSelect = {
   id: true,
   email: true,
   name: true,
   phone: true,
+  birth_date: true,
   role: true,
   created_at: true,
 } as const

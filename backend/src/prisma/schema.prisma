@@ -18,6 +18,7 @@ model Department {
 
   municipalities Municipality[]
   products       Product[]
+  addresses      Address[]
 
   @@map("departments")
 }
@@ -29,7 +30,8 @@ model Municipality {
   department_id Int
   department    Department @relation(fields: [department_id], references: [id])
 
-  products Product[]
+  products  Product[]
+  addresses Address[]
 
   @@map("municipalities")
 }
@@ -179,6 +181,7 @@ model User {
   password_hash    String?
   name             String
   phone            String?
+  birth_date       DateTime?    @db.Date
   role             UserRole     @default(customer)
   auth_provider    AuthProvider  @default(local)
   auth_provider_id String?
@@ -193,8 +196,33 @@ model User {
   orders           Order[]
   cart_items       CartItem[]
   similar_requests SimilarRequest[]
+  addresses        Address[]
 
   @@map("users")
+}
+
+// libreta de direcciones; al hacer un pedido se copia a Order.shipping_address
+model Address {
+  id              String       @id @default(uuid())
+  user_id         String
+  user            User         @relation(fields: [user_id], references: [id])
+  label           String
+  recipient_name  String
+  phone           String
+  department_id   Int
+  department      Department   @relation(fields: [department_id], references: [id])
+  municipality_id Int
+  municipality    Municipality @relation(fields: [municipality_id], references: [id])
+  zone            String?
+  address_line    String
+  reference       String?
+  is_default      Boolean      @default(false)
+  is_active       Boolean      @default(true)
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @updatedAt
+
+  @@index([user_id])
+  @@map("addresses")
 }
 
 // ============================================

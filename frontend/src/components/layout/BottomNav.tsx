@@ -3,9 +3,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
+import { useProfileInitial } from '@/lib/useProfileInitial'
 
 export default function BottomNav() {
   const pathname = usePathname()
+  const initial = useProfileInitial()
   const [visible, setVisible] = useState(true)
   const lastScrollY = useRef(0)
   const ticking = useRef(false)
@@ -46,7 +48,7 @@ export default function BottomNav() {
   const isHome = pathname === '/'
   const isFavoritos = pathname === '/favoritos'
   const isCarrito = pathname === '/carrito'
-  const isCuenta = ['/cuenta', '/ingresar', '/registro'].some((p) => pathname.startsWith(p))
+  const isCuenta = ['/cuenta', '/ingresar', '/registro', '/bienvenida'].some((p) => pathname.startsWith(p))
 
   return (
     <nav
@@ -72,7 +74,7 @@ export default function BottomNav() {
           <CartIcon active={isCarrito} />
         </NavItem>
         <NavItem href="/cuenta" isActive={isCuenta} badge={undefined}>
-          <UserIcon active={isCuenta} />
+          {initial ? <InitialBadge initial={initial} active={isCuenta} /> : <UserIcon active={isCuenta} />}
         </NavItem>
       </div>
     </nav>
@@ -174,5 +176,25 @@ function UserIcon({ active }: { active: boolean }) {
       <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
       <circle cx="12" cy="7" r="4" />
     </svg>
+  )
+}
+
+function InitialBadge({ initial, active }: { initial: string; active: boolean }) {
+  return (
+    <span
+      className="flex items-center justify-center rounded-full"
+      style={{
+        width: '26px',
+        height: '26px',
+        backgroundColor: 'var(--color-text-primary)',
+        color: 'var(--color-text-inverse)',
+        fontSize: '0.75rem',
+        fontWeight: 600,
+        boxShadow: active ? '0 0 0 2px var(--color-bg), 0 0 0 3.5px var(--color-text-primary)' : undefined,
+        transition: 'box-shadow 200ms ease',
+      }}
+    >
+      {initial}
+    </span>
   )
 }
