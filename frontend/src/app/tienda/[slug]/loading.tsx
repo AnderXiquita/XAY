@@ -1,6 +1,3 @@
-/* Esqueleto del detalle de producto. Next.js lo muestra al instante mientras el servidor
-   trae el producto, así el cambio de pantalla empieza en cuanto se hace click
-   (en lugar de quedarse quieto y luego cambiar de golpe). Imita el layout real. */
 
 function Block({ className = '', style }: { className?: string; style?: React.CSSProperties }) {
   return (
@@ -20,23 +17,23 @@ function Block({ className = '', style }: { className?: string; style?: React.CS
 export default function ProductLoading() {
   return (
     <div className="max-w-screen-2xl mx-auto lg:px-[3%] pb-24 lg:pb-24" aria-busy="true" aria-label="Cargando producto">
-      <div className="lg:hidden h-12" />
       <div className="hidden lg:block pt-8 pb-6">
         <Block style={{ width: '260px', height: '14px' }} />
       </div>
 
       <div className="lg:grid lg:grid-cols-12 lg:gap-10 xl:gap-16">
-        {/* Galería */}
         <div className="lg:col-span-7 xl:col-span-8">
-          <Block className="lg:hidden" style={{ aspectRatio: '4/5', borderRadius: 0 }} />
+          <div className="lg:hidden flex gap-1.5 pl-4 pt-3 overflow-hidden">
+            <Block className="shrink-0" style={{ height: 'min(46svh, 100vw)', aspectRatio: '3/4' }} />
+            <Block className="shrink-0" style={{ height: 'min(46svh, 100vw)', aspectRatio: '3/4' }} />
+          </div>
           <div className="hidden lg:grid grid-cols-2 gap-2">
             <Block style={{ aspectRatio: '4/5' }} />
             <Block style={{ aspectRatio: '4/5' }} />
           </div>
         </div>
 
-        {/* Información */}
-        <div className="px-4 pt-6 lg:px-0 lg:pt-0 lg:col-span-5 xl:col-span-4 space-y-4">
+        <div className="px-4 pt-4 lg:px-0 lg:pt-0 lg:col-span-5 xl:col-span-4 space-y-4">
           <Block style={{ width: '40%', height: '12px' }} />
           <Block style={{ width: '85%', height: '34px' }} />
           <Block style={{ width: '30%', height: '22px' }} />

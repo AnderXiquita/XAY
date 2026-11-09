@@ -5,15 +5,10 @@ import type { ProductImage } from '@/lib/api'
 
 interface ProductVideoProps {
   media: ProductImage
-  // Cambia solo el estilo del botón de sonido: círculo sobre la foto (galería)
-  // o ícono suelto en la esquina de la pantalla (lightbox)
   variant: 'gallery' | 'lightbox'
   className?: string
 }
 
-/* Video de producto: autoplay, silencio y loop, sin controles del reproductor
-   (se ve como una imagen en movimiento, igual que en las tiendas de moda).
-   Solo lleva un botón para activar el sonido. Usa <video> porque <Image> de Next.js es solo para imágenes. */
 export default function ProductVideo({ media, variant, className = '' }: ProductVideoProps) {
   const [muted, setMuted] = useState(true)
   const isLightbox = variant === 'lightbox'
@@ -34,11 +29,9 @@ export default function ProductVideo({ media, variant, className = '' }: Product
       <button
         type="button"
         onClick={(e) => {
-          // No abrir el lightbox al tocar el botón de sonido
           e.stopPropagation()
           setMuted((m) => !m)
         }}
-        // Evita que el lightbox lo tome como tap/click sobre la foto
         onPointerDown={(e) => e.stopPropagation()}
         onPointerUp={(e) => e.stopPropagation()}
         aria-label={muted ? 'Activar sonido' : 'Silenciar'}

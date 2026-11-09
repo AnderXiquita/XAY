@@ -17,7 +17,7 @@ export interface ProductImage {
   position: number
   type: 'main' | 'flat' | 'detail' | 'model'
   media_type: 'image' | 'video'
-  poster_url: string | null   // Solo videos: imagen mientras carga
+  poster_url: string | null
 }
 
 export interface Category {
@@ -115,7 +115,6 @@ export async function getProducts(filters: ProductFilters = {}): Promise<Product
   return res.json()
 }
 
-// Devuelve null si el producto no existe (o es borrador), para que la página muestre 404
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const res = await fetch(`${BASE_URL}/api/v1/products/${encodeURIComponent(slug)}`, {
     next: { revalidate: 60 },
@@ -132,19 +131,15 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
 export interface RelatedProducts {
   data: Product[]
-  // 'department' = todas son del mismo departamento ("Más piezas de Sololá");
-  // 'similar' = se completó con la misma categoría o tipo ("También te puede gustar")
   basis: 'department' | 'similar'
 }
 
-// Relacionados: primero del mismo departamento, completando con piezas similares si no alcanzan
 export async function getRelatedProducts(slug: string, limit = 4): Promise<RelatedProducts> {
   const res = await fetch(
     `${BASE_URL}/api/v1/products/${encodeURIComponent(slug)}/related?limit=${limit}`,
     { next: { revalidate: 60 } },
   )
 
-  // Los relacionados son secundarios: si fallan, la página se muestra sin esa sección
   if (!res.ok) return { data: [], basis: 'similar' }
 
   return res.json()

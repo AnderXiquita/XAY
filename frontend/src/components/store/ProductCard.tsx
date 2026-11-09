@@ -141,7 +141,6 @@ export default function ProductCard({ product, listMode = false }: ProductCardPr
   const [isCardHovered, setIsCardHovered] = useState(false)
   const [lightboxOpen, setLightboxOpen] = useState(false)
 
-  // La card y su lightbox solo muestran fotos; los videos se ven en el detalle del producto
   const photos = product.images.filter((img) => img.media_type === 'image')
   const mainImage = photos.find((img) => img.type === 'main') ?? photos[0]
 

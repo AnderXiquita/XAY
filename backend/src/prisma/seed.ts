@@ -771,7 +771,6 @@ async function main() {
     // Eliminar imágenes existentes y recrear (para que el seed sea repetible)
     await prisma.productImage.deleteMany({ where: { product_id: product.id } })
 
-    // 6 imágenes por producto: misma foto repetida con distintos tipos
     // mientras no hay fotos reales (ver CLAUDE.md — sección de imágenes)
     type SeedMedia = {
       url: string
@@ -789,8 +788,7 @@ async function main() {
       { url: p.image, alt_text: `${p.name} — detalle del tejido`, type: 'detail' as const },
     ].map((m) => ({ ...m, media_type: 'image' as const, poster_url: null }))
 
-    // Los productos 1 a 5 llevan además un video en la segunda posición (7 elementos en total),
-    // así se pueden probar galerías con cantidad par (6) e impar (7)
+    // productos 1 a 5 llevan un video de prueba, para probar galerías de 6 y 7 elementos
     if (/prod[1-5]\.jpg$/.test(p.image)) {
       media.splice(1, 0, {
         url: p.image.replace('/image/', '/video/').replace('.jpg', '.mp4'),

@@ -6,19 +6,16 @@ import ImageWithSkeleton from '@/components/ui/ImageWithSkeleton'
 import ProductVideo from './ProductVideo'
 import ProductLightbox from './ProductLightbox'
 
+const SLIDE_GAP = 6
+
 interface ProductGalleryProps {
   media: ProductImage[]
   productName: string
 }
 
-/* Galería del detalle de producto.
-   - Mobile: carrusel horizontal que se arrastra, con barra de progreso.
-   - Desktop: todas las fotos en grande, en pares. Si la cantidad es impar,
-     la primera ocupa el ancho completo para que no quede un hueco al final.
-   Click/tap en cualquier elemento abre el lightbox en ese mismo elemento. */
 export default function ProductGallery({ media, productName }: ProductGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
-  const [progress, setProgress] = useState(0) // 0 → 1 según el scroll del carrusel
+  const [progress, setProgress] = useState(0)
   const [activeIndex, setActiveIndex] = useState(0)
   const carouselRef = useRef<HTMLDivElement>(null)
 
@@ -40,10 +37,14 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
     if (!el) return
     const max = el.scrollWidth - el.clientWidth
     setProgress(max > 0 ? el.scrollLeft / max : 0)
-    setActiveIndex(Math.round(el.scrollLeft / el.clientWidth))
+
+    const slide = el.firstElementChild as HTMLElement | null
+    const step = slide ? slide.offsetWidth + SLIDE_GAP : el.clientWidth
+    const index = el.scrollLeft >= max - 2 ? media.length - 1 : Math.round(el.scrollLeft / step)
+    setActiveIndex(index)
   }
 
-  // Contenedor clickeable. Es un div (no <button>) porque el video lleva su propio botón de sonido adentro
+  // div y no button porque el video trae su propio botón
   function tileProps(index: number) {
     return {
       role: 'button' as const,
@@ -68,7 +69,7 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
         alt={item.alt_text ?? productName}
         fill
         sizes={sizes}
-        // Lenis interfiere con el lazy loading (ver CLAUDE.md): la primera con prioridad, el resto eager
+        // eager por Lenis (ver CLAUDE.md)
         priority={index === 0}
         loading={index === 0 ? undefined : 'eager'}
         className="object-cover"
@@ -78,31 +79,34 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
 
   return (
     <>
-      {/* ── MOBILE: carrusel ── */}
       <div className="lg:hidden">
         <div
           ref={carouselRef}
           onScroll={onCarouselScroll}
-          className="flex overflow-x-auto snap-x snap-mandatory [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-          style={{ overscrollBehaviorX: 'contain' }}
+          className="flex overflow-x-auto snap-x snap-mandatory px-4 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ gap: `${SLIDE_GAP}px`, scrollPaddingInline: '16px', overscrollBehaviorX: 'contain' }}
           aria-label={`Galería de ${productName}`}
         >
           {media.map((item, i) => (
             <div
               key={item.id}
               {...tileProps(i)}
-              className="relative shrink-0 w-full snap-center overflow-hidden"
-              style={{ aspectRatio: '4/5', backgroundColor: 'var(--color-surface)' }}
+              className="relative shrink-0 snap-start overflow-hidden"
+              style={{
+                height: 'min(46svh, 100vw)',
+                aspectRatio: '3/4',
+                borderRadius: '6px',
+                backgroundColor: 'var(--color-surface)',
+              }}
               aria-label={`Ver ${item.media_type === 'video' ? 'video' : 'imagen'} ${i + 1} de ${media.length} en grande`}
             >
-              {renderMedia(item, i, '100vw')}
+              {renderMedia(item, i, '85vw')}
             </div>
           ))}
         </div>
 
-        {/* Barra de progreso: el tramo oscuro avanza conforme se arrastra */}
         {media.length > 1 && (
-          <div className="flex items-center gap-3 px-4 mt-3">
+          <div className="flex items-center gap-3 px-4 mt-2">
             <div className="relative flex-1 overflow-hidden rounded-full" style={{ height: '3px', backgroundColor: 'var(--color-border)' }}>
               <div
                 className="absolute inset-y-0 left-0 rounded-full"
@@ -120,7 +124,6 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
         )}
       </div>
 
-      {/* ── DESKTOP: grid en pares ── */}
       <div className="hidden lg:grid grid-cols-2 gap-2">
         {media.map((item, i) => {
           const isHero = isOdd && i === 0
@@ -130,7 +133,6 @@ export default function ProductGallery({ media, productName }: ProductGalleryPro
               {...tileProps(i)}
               className={`group relative overflow-hidden ${isHero ? 'col-span-2' : ''}`}
               style={{
-                // La foto ancha tiene la misma altura que una fila de pares (2 × 4:5 = 8:5)
                 aspectRatio: isHero ? '8/5' : '4/5',
                 backgroundColor: 'var(--color-surface)',
                 borderRadius: '6px',

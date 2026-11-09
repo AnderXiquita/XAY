@@ -34,8 +34,7 @@ export default function BottomNav() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  // Publica el estado en <html data-bottom-nav="..."> para que otras barras fijas
-  // (ej. el botón de "Agregar al carrito" del detalle) se muevan junto con esta (ver globals.css)
+  // para que la barra del botón en el detalle se mueva junto con esta
   useEffect(() => {
     document.documentElement.dataset.bottomNav = visible ? 'visible' : 'hidden'
   }, [visible])

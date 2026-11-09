@@ -11,16 +11,6 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-/* ============================================
-   DETALLE DE PRODUCTO — /tienda/[slug]
-   Se genera en el servidor (SEO y vista previa al compartir por WhatsApp).
-   Solo la galería, el lightbox y los botones corren en el navegador.
-
-   Desktop: fotos a la izquierda, información fija a la derecha. Al terminar
-   las fotos, las dos columnas suben juntas y aparecen los relacionados.
-   Mobile: carrusel arriba, información abajo y botón fijo encima del BottomNav.
-   ============================================ */
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params
   const product = await getProductBySlug(slug)
@@ -36,7 +26,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title: product.name,
       description: origin || undefined,
-      // Solo URLs absolutas (Cloudinary); las de desarrollo son rutas locales
       images: mainImage?.url.startsWith('http') ? [{ url: mainImage.url, alt: mainImage.alt_text ?? product.name }] : undefined,
     },
   }
@@ -52,22 +41,7 @@ export default async function ProductPage({ params }: PageProps) {
   const relatedTitle = sameDepartment ? `Más piezas de ${product.department!.name}` : 'También te puede gustar'
 
   return (
-    // pb extra en mobile para que la barra fija del botón no tape el contenido
-    // page-transition: fade suave al reemplazar el esqueleto de carga (loading.tsx)
     <div className="page-transition max-w-screen-2xl mx-auto lg:px-[3%] pb-24 lg:pb-0">
-      {/* ── MOBILE: volver ── */}
-      <Link
-        href="/tienda"
-        className="lg:hidden inline-flex items-center gap-2 px-4"
-        style={{ minHeight: '48px', fontSize: '0.9rem', fontWeight: 500, color: 'var(--color-text-primary)' }}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-        {product.category.name}
-      </Link>
-
-      {/* ── DESKTOP: breadcrumb ── */}
       <nav aria-label="Ruta" className="hidden lg:block pt-8 pb-6">
         <ol className="flex items-center gap-3" style={{ fontSize: '0.82rem', color: 'var(--color-text-muted)' }}>
           <li><Link href="/tienda" className="animated-underline" style={{ color: 'var(--color-text-secondary)' }}>Tienda</Link></li>
@@ -78,23 +52,41 @@ export default async function ProductPage({ params }: PageProps) {
         </ol>
       </nav>
 
-      {/* ── DOS COLUMNAS ──
-          Sin items-start a propósito: la celda derecha debe estirarse al alto de la galería
-          para que la columna fija tenga recorrido. */}
+      {/* sin items-start: la columna derecha tiene que estirarse para que funcione el sticky */}
       <div className="lg:grid lg:grid-cols-12 lg:gap-10 xl:gap-16">
-        <div className="lg:col-span-7 xl:col-span-8">
+        <div className="relative pt-3 lg:pt-0 lg:col-span-7 xl:col-span-8">
+          <Link
+            href="/tienda"
+            aria-label={`Volver a la tienda (${product.category.name})`}
+            className="lg:hidden absolute z-10 flex items-center justify-center"
+            style={{ top: '16px', left: '20px', width: '44px', height: '44px' }}
+          >
+            <span
+              className="flex items-center justify-center rounded-full"
+              style={{
+                width: '36px',
+                height: '36px',
+                backgroundColor: 'rgba(255, 251, 244, 0.9)',
+                boxShadow: 'var(--shadow-sm)',
+                color: 'var(--color-text-primary)',
+              }}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </span>
+          </Link>
+
           <ProductGallery media={product.images} productName={product.name} />
         </div>
 
-        <div className="px-4 pt-6 lg:px-0 lg:pt-0 lg:col-span-5 xl:col-span-4">
+        <div className="px-4 pt-4 lg:px-0 lg:pt-0 lg:col-span-5 xl:col-span-4">
           <StickyColumn>
             <ProductInfo product={product} />
           </StickyColumn>
         </div>
       </div>
 
-      {/* ── RELACIONADOS ── */}
-      {/* Sin relacionados: cierre con aire para que la página no choque con el footer */}
       {related.data.length === 0 && (
         <div className="flex justify-center px-4 pt-16 pb-8 lg:pt-24 lg:pb-24">
           <Link

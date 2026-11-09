@@ -15,18 +15,13 @@ interface ProductLightboxProps {
 type LenisLike = { stop: () => void; start: () => void }
 
 const ZOOM = 2.5
-const SWIPE_THRESHOLD = 50 // px para considerar que el usuario deslizó
+const SWIPE_THRESHOLD = 50
 const DOUBLE_TAP_MS = 300
 
-/* Vista ampliada de fotos y videos del detalle de producto.
-   Fondo claro, flechas circulares, contador "01 —— 07" y X arriba a la derecha.
-   - Desktop: click hace zoom en el punto señalado; mover el mouse recorre la foto.
-   - Mobile: deslizar cambia de foto; doble tap hace zoom; arrastrar recorre la foto ampliada. */
 export default function ProductLightbox({ media, initialIndex, productName, onClose }: ProductLightboxProps) {
   const [index, setIndex] = useState(initialIndex)
   const [visible, setVisible] = useState(false)
   const [zoomed, setZoomed] = useState(false)
-  // Punto de origen del zoom en % — moverlo es lo que "recorre" la foto ampliada
   const [origin, setOrigin] = useState({ x: 50, y: 50 })
   const [panning, setPanning] = useState(false)
 
@@ -49,13 +44,11 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
     setIndex((i) => (i + delta + media.length) % media.length)
   }, [media.length])
 
-  // Fade in + foco en la X para que el teclado quede dentro del lightbox
   useEffect(() => {
     requestAnimationFrame(() => setVisible(true))
     closeRef.current?.focus()
   }, [])
 
-  // Bloquear el scroll de la página y pausar Lenis mientras está abierto
   useEffect(() => {
     const lenis = (window as unknown as { __lenis?: LenisLike }).__lenis
     document.body.style.overflow = 'hidden'
@@ -76,7 +69,6 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
     return () => window.removeEventListener('keydown', onKey)
   }, [go, handleClose])
 
-  // Posición del puntero dentro del área, en %
   function pointToPercent(clientX: number, clientY: number) {
     const rect = areaRef.current?.getBoundingClientRect()
     if (!rect) return { x: 50, y: 50 }
@@ -104,13 +96,11 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
   function onPointerMove(e: React.PointerEvent) {
     if (!zoomed) return
 
-    // Mouse: la foto ampliada sigue al cursor
     if (e.pointerType === 'mouse') {
       setOrigin(pointToPercent(e.clientX, e.clientY))
       return
     }
 
-    // Touch: arrastrar mueve la foto en la dirección del dedo
     if (!pointer.current.down) return
     const rect = areaRef.current?.getBoundingClientRect()
     if (!rect) return
@@ -138,13 +128,11 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
       return
     }
 
-    // Touch sin zoom: deslizar horizontal cambia de foto
     if (!zoomed && Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy)) {
       go(dx < 0 ? 1 : -1)
       return
     }
 
-    // Doble tap: zoom
     if (!moved) {
       const now = Date.now()
       if (now - lastTap.current < DOUBLE_TAP_MS) {
@@ -170,7 +158,6 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
         transition: 'opacity 250ms ease',
       }}
     >
-      {/* ── MEDIA ── */}
       <div
         ref={areaRef}
         className="absolute inset-0 overflow-hidden select-none"
@@ -189,7 +176,6 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
           style={{
             transform: zoomed ? `scale(${ZOOM})` : 'scale(1)',
             transformOrigin: `${origin.x}% ${origin.y}%`,
-            // Sin transición mientras se arrastra o se sigue el mouse; suave al entrar/salir del zoom
             transition: panning ? 'none' : 'transform 300ms ease, transform-origin 120ms linear',
             animation: 'fadeIn 250ms ease',
           }}
@@ -211,7 +197,6 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
         </div>
       </div>
 
-      {/* ── CERRAR ── */}
       <button
         ref={closeRef}
         type="button"
@@ -232,7 +217,6 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
         </svg>
       </button>
 
-      {/* ── FLECHAS ── se ocultan con zoom para no tapar la foto */}
       {media.length > 1 && !zoomed && (
         <>
           <ArrowButton direction="prev" onClick={() => go(-1)} />
@@ -240,7 +224,6 @@ export default function ProductLightbox({ media, initialIndex, productName, onCl
         </>
       )}
 
-      {/* ── CONTADOR 01 —— 07 ── */}
       <div
         className="absolute z-10 flex items-center gap-3 tabular-nums pointer-events-none"
         style={{
@@ -267,7 +250,6 @@ function ArrowButton({ direction, onClick }: { direction: 'prev' | 'next'; onCli
       type="button"
       onClick={onClick}
       aria-label={isPrev ? 'Anterior' : 'Siguiente'}
-      // Área táctil de 44px; el círculo visible es de 36px
       className="absolute z-10 top-1/2 -translate-y-1/2 flex items-center justify-center"
       style={{ [isPrev ? 'left' : 'right']: '4px', width: '48px', height: '48px' }}
     >

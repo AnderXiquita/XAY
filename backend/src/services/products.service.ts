@@ -147,11 +147,7 @@ export async function getProductBySlug(slug: string) {
   return product
 }
 
-// Piezas relacionadas para la sección del final del detalle de producto.
-// Lo que conecta las piezas es su origen: primero se buscan otras del mismo departamento.
-// Si no alcanzan, se completa con la misma categoría y luego con piezas del mismo tipo
-// (típica o complemento moderno), para que la sección nunca quede vacía o con una sola card.
-// `basis` le dice al frontend qué título usar: 'department' = todas son del mismo departamento.
+// mismo departamento primero; si no alcanzan, misma categoría y luego mismo tipo
 export async function getRelatedProducts(slug: string, rawLimit?: string) {
   const limit = Math.min(12, Math.max(1, parseInt(rawLimit || '4') || 4))
 

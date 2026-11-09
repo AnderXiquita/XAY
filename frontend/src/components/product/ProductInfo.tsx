@@ -14,9 +14,6 @@ function capitalize(text: string) {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-/* Columna de información del detalle de producto.
-   En desktop vive en la columna fija de la derecha; en mobile va debajo del carrusel
-   y el botón principal se muestra en una barra fija abajo (encima del BottomNav). */
 export default function ProductInfo({ product }: { product: Product }) {
   const [isFavorite, setIsFavorite] = useState(false)
 
@@ -37,7 +34,6 @@ export default function ProductInfo({ product }: { product: Product }) {
 
   return (
     <div>
-      {/* ── ENCABEZADO ── */}
       {origin && (
         <p className="uppercase mb-2" style={{ fontSize: '0.72rem', letterSpacing: '0.14em', color: 'var(--color-text-muted)' }}>
           {origin}
@@ -57,7 +53,7 @@ export default function ProductInfo({ product }: { product: Product }) {
         <StatusPill product={product} />
       </div>
 
-      {/* ── MEDIDAS ── la ropa típica no usa tallas estándar: se muestran las dimensiones reales */}
+      {/* la ropa típica no usa tallas estándar, se muestran las medidas reales */}
       {hasMeasures && (
         <section className="py-5 border-t" style={{ borderColor: 'var(--color-border)' }}>
           <h2 className="uppercase mb-3" style={{ fontSize: '0.75rem', letterSpacing: '0.14em', fontWeight: 500, color: 'var(--color-text-secondary)' }}>
@@ -80,7 +76,6 @@ export default function ProductInfo({ product }: { product: Product }) {
         </section>
       )}
 
-      {/* ── ACCIONES (desktop) ── en mobile están en la barra fija de abajo */}
       <div className="hidden lg:flex gap-3 py-5 border-t" style={{ borderColor: 'var(--color-border)' }}>
         <FavoriteButton isFavorite={isFavorite} onToggle={() => setIsFavorite((f) => !f)} />
         <PrimaryAction product={product} />
@@ -95,7 +90,6 @@ export default function ProductInfo({ product }: { product: Product }) {
         </p>
       )}
 
-      {/* ── ACORDEONES ── */}
       <div className="border-b" style={{ borderColor: 'var(--color-border)' }}>
         {product.description && (
           <Accordion title="Historia de la pieza" defaultOpen>
@@ -135,8 +129,6 @@ export default function ProductInfo({ product }: { product: Product }) {
         </Accordion>
       </div>
 
-      {/* ── BARRA FIJA (mobile) ── encima del BottomNav; cuando este se esconde al hacer scroll,
-          la barra baja con él y ocupa su lugar (clase mobile-action-bar en globals.css) */}
       <div
         className="mobile-action-bar lg:hidden fixed left-0 right-0 z-40 flex items-center gap-3 px-4 border-t"
         style={{
@@ -187,8 +179,6 @@ function StatusPill({ product }: { product: Product }) {
   )
 }
 
-// Botón principal según el estado: agregar al carrito, solicitar similar o próximamente.
-// El carrito y "solicitar similar" se conectan en sus propios bloques (ver CLAUDE.md §7).
 function PrimaryAction({ product }: { product: Product }) {
   const base = 'flex-1 flex items-center justify-center rounded-full uppercase transition-colors duration-200'
   const style: React.CSSProperties = { minHeight: '48px', fontSize: '0.8rem', letterSpacing: '0.12em', fontWeight: 500 }
@@ -200,7 +190,7 @@ function PrimaryAction({ product }: { product: Product }) {
     return (
       <button
         type="button"
-        // TODO(bloque 12): abrir el formulario de solicitud de pieza similar
+        // TODO: solicitar similar (bloque 12)
         className={`${base} border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-text-inverse)]`}
         style={style}
       >
@@ -220,7 +210,7 @@ function PrimaryAction({ product }: { product: Product }) {
   return (
     <button
       type="button"
-      // TODO(bloque 7): agregar al carrito persistido en BD
+      // TODO: carrito (bloque 7)
       className={`${base} bg-[var(--color-accent)] text-[var(--color-text-inverse)] hover:bg-[var(--color-accent-light)]`}
       style={style}
     >
@@ -246,7 +236,6 @@ function FavoriteButton({ isFavorite, onToggle }: { isFavorite: boolean; onToggl
   )
 }
 
-// Acordeón con el truco de grid-template-rows (1fr ↔ 0fr) usado en los filtros de la tienda
 function Accordion({ title, defaultOpen = false, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
