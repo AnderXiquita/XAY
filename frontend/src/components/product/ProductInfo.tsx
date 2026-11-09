@@ -123,7 +123,7 @@ export default function ProductInfo({ product }: { product: Product }) {
 
         <Accordion title="Envío y pago">
           <div className="space-y-2" style={{ fontSize: '0.88rem', lineHeight: 1.6, color: 'var(--color-text-secondary)' }}>
-            <p>Pagás por transferencia o depósito bancario. Al confirmar tu pedido te mostramos los datos de la cuenta y tu número de orden.</p>
+            <p>Pagas por transferencia o depósito bancario. Al confirmar tu pedido te mostramos los datos de la cuenta y tu número de orden.</p>
             <p>Cuando verificamos el pago preparamos tu pieza y te compartimos el número de rastreo del envío.</p>
           </div>
         </Accordion>

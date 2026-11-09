@@ -238,7 +238,7 @@ const categoryArticles: CategoryArticle[] = [
     headerImageAlt: 'Textiles guatemaltecos ceremoniales con significado cultural',
     intro: [
       'La ropa típica guatemalteca no vive en un museo — se usa todos los días. En mercados, en bodas, en funerales, en fiestas patronales. Cada ocasión tiene sus propias reglas sobre qué usar, cómo usarlo y qué significa.',
-      'Entender estas tradiciones es entender que un güipil no es solo una prenda bonita. Es un sistema de comunicación visual que dice quién sos, de dónde venís y a qué ocasión llegás.',
+      'Entender estas tradiciones es entender que un güipil no es solo una prenda bonita. Es un sistema de comunicación visual que dice quién eres, de dónde vienes y a qué ocasión llegas.',
     ],
     sections: [
       {
@@ -732,13 +732,13 @@ export default function CulturaPage() {
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
             >
               Cada prenda tiene una historia.{' '}
-              <span style={{ color: 'var(--color-accent)' }}>Conocela en persona.</span>
+              <span style={{ color: 'var(--color-accent)' }}>Conócela en persona.</span>
             </h2>
             <p
               className="text-base sm:text-lg leading-relaxed mb-10 max-w-xl mx-auto"
               style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
             >
-              Ahora que conocés las técnicas, los orígenes y las manos detrás del tejido,
+              Ahora que conoces las técnicas, los orígenes y las manos detrás del tejido,
               explorá las piezas que nacieron de todo ese conocimiento.
             </p>
             <Link
