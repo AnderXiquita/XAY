@@ -5,39 +5,67 @@ interface AuthShellProps {
   title: string
   subtitle: string
   image?: string
+  footer?: React.ReactNode
   children: React.ReactNode
 }
 
-export default function AuthShell({ eyebrow = 'Mi cuenta', title, subtitle, image = '/image/Artesanas.jpg', children }: AuthShellProps) {
+function Eyebrow({ text, inverse }: { text: string; inverse?: boolean }) {
   return (
-    <section className="px-6 sm:px-10 lg:px-20 pt-10 sm:pt-14 lg:pt-20 pb-20 sm:pb-24 lg:pb-28">
-      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-center">
-        <div className="lg:col-span-6 xl:col-span-5 w-full max-w-md mx-auto lg:mx-0">
-          <div className="flex items-center gap-4 mb-6">
-            <span className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--color-accent)', fontFamily: 'var(--font-body)' }}>
-              {eyebrow}
-            </span>
-            <div className="h-px flex-1" style={{ backgroundColor: 'var(--color-border)' }} />
+    <div className="flex items-center gap-4 mb-4 lg:mb-6">
+      <span
+        className="text-xs uppercase tracking-[0.3em]"
+        style={{ color: inverse ? 'var(--color-text-inverse)' : 'var(--color-accent)', fontFamily: 'var(--font-body)' }}
+      >
+        {text}
+      </span>
+      <div className="h-px flex-1" style={{ backgroundColor: inverse ? 'rgba(255, 251, 244, 0.35)' : 'var(--color-border)' }} />
+    </div>
+  )
+}
+
+const titleClass = 'text-3xl sm:text-4xl font-bold leading-tight'
+
+export default function AuthShell({ eyebrow = 'Mi cuenta', title, subtitle, image = '/image/Artesanas.jpg', footer, children }: AuthShellProps) {
+  return (
+    <section data-auth-page className="lg:px-20 lg:pt-20 lg:pb-28">
+      <div className="auth-shell flex flex-col lg:grid lg:grid-cols-12 lg:gap-16 lg:items-center max-w-6xl mx-auto">
+        <div className="lg:hidden relative shrink-0 overflow-hidden" style={{ height: 'clamp(190px, 28svh, 280px)' }}>
+          <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
+          <div
+            className="absolute inset-0"
+            style={{ background: 'linear-gradient(to top, rgba(9, 31, 44, 0.88) 0%, rgba(9, 31, 44, 0.35) 60%, rgba(9, 31, 44, 0.15) 100%)' }}
+          />
+          <div className="absolute inset-x-0 bottom-0 px-6 pb-12 sm:px-10">
+            <Eyebrow text={eyebrow} inverse />
+            <p className={titleClass} style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-inverse)' }}>
+              {title}
+            </p>
           </div>
-          <h1
-            className="text-3xl sm:text-4xl font-bold leading-tight mb-4"
-            style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-          >
-            {title}
-          </h1>
-          <p className="text-sm sm:text-base leading-relaxed mb-10" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
-            {subtitle}
-          </p>
-          {children}
         </div>
 
-        <div className="hidden lg:block lg:col-span-6 xl:col-span-6 xl:col-start-7">
+        <div
+          className="relative flex-1 -mt-6 rounded-t-3xl px-6 pt-8 pb-10 sm:px-10 lg:mt-0 lg:rounded-none lg:p-0 lg:col-span-6 xl:col-span-5"
+          style={{ backgroundColor: 'var(--color-bg)' }}
+        >
+          <div className="max-w-md mx-auto lg:mx-0">
+            <div className="hidden lg:block">
+              <Eyebrow text={eyebrow} />
+            </div>
+            <h1 className={`${titleClass} sr-only lg:not-sr-only lg:block lg:mb-4`} style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}>
+              {title}
+            </h1>
+            <p className="text-sm lg:text-base leading-relaxed mb-8 lg:mb-10" style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}>
+              {subtitle}
+            </p>
+            {children}
+            {footer && <div className="mt-10 lg:mt-12">{footer}</div>}
+          </div>
+        </div>
+
+        <div className="hidden lg:block lg:col-span-6 xl:col-start-7">
           <div className="relative overflow-hidden" style={{ borderRadius: 'var(--radius-lg)', aspectRatio: '4 / 5' }}>
-            <Image src={image} alt="" fill priority sizes="(min-width: 1280px) 560px, 50vw" className="object-cover" />
-            <div
-              className="absolute inset-0"
-              style={{ background: 'linear-gradient(to top, rgba(9, 31, 44, 0.6), transparent 55%)' }}
-            />
+            <Image src={image} alt="" fill sizes="(min-width: 1280px) 560px, 50vw" className="object-cover" />
+            <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(9, 31, 44, 0.6), transparent 55%)' }} />
             <p
               className="absolute left-10 right-10 bottom-10 text-2xl leading-snug italic"
               style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-inverse)' }}

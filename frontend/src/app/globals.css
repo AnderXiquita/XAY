@@ -292,3 +292,14 @@ html[data-bottom-nav='hidden'] .mobile-action-bar {
   background-color: var(--color-surface);
   color: var(--color-text-primary);
 }
+
+/* login, registro y bienvenida en mobile: sin footer y del alto del teléfono (header 64 + borde + barra inferior 64) */
+@media (max-width: 1023px) {
+  body:has([data-auth-page]) footer {
+    display: none;
+  }
+
+  .auth-shell {
+    min-height: calc(100svh - 129px);
+  }
+}
