@@ -179,3 +179,64 @@ export async function getDepartments(): Promise<Department[]> {
   const json = await res.json()
   return json.data
 }
+
+// ============================================
+// CUENTAS
+// ============================================
+
+export interface User {
+  id: string
+  email: string
+  name: string
+  phone: string | null
+  role: 'customer' | 'admin' | 'vendor'
+  created_at: string
+}
+
+export interface ApiError {
+  error: string
+  code: string
+  details?: Record<string, string[]>
+}
+
+export type AuthResult =
+  | { ok: true; token: string; user: User }
+  | { ok: false; error: ApiError }
+
+async function postAuth(path: string, body: Record<string, string>): Promise<AuthResult> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/auth${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      cache: 'no-store',
+    })
+    const json = await res.json()
+    if (!res.ok) return { ok: false, error: json as ApiError }
+    const { token, user } = (json as { data: { token: string; user: User } }).data
+    return { ok: true, token, user }
+  } catch {
+    return { ok: false, error: { error: 'No pudimos conectar con el servidor. Inténtalo de nuevo.', code: 'NETWORK_ERROR' } }
+  }
+}
+
+export function loginRequest(input: { email: string; password: string }) {
+  return postAuth('/login', input)
+}
+
+export function registerRequest(input: { name: string; email: string; password: string }) {
+  return postAuth('/register', input)
+}
+
+export async function getMe(token: string): Promise<User | null> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+      cache: 'no-store',
+    })
+    if (!res.ok) return null
+    return ((await res.json()) as { data: User }).data
+  } catch {
+    return null
+  }
+}

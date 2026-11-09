@@ -252,3 +252,43 @@ html[data-bottom-nav='hidden'] .mobile-action-bar {
   background-color: var(--color-border);
   border-radius: 9999px;
 }
+
+/* botón de la tienda: solo borde, se rellena en hover */
+.btn-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 2rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--color-accent);
+  background-color: transparent;
+  color: var(--color-accent);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 300ms ease, color 300ms ease, border-color 300ms ease;
+}
+
+.btn-pill:hover:not(:disabled) {
+  background-color: var(--color-accent);
+  color: var(--color-text-inverse);
+}
+
+.btn-pill:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* acción secundaria: sin borde */
+.btn-pill-quiet {
+  border-color: transparent;
+  color: var(--color-text-muted);
+}
+
+.btn-pill-quiet:hover:not(:disabled) {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+}

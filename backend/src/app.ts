@@ -6,6 +6,7 @@ import { errorHandler } from './middleware/errorHandler.js'
 import productsRoutes from './routes/products.routes.js'
 import categoriesRoutes from './routes/categories.routes.js'
 import departmentsRoutes from './routes/departments.routes.js'
+import authRoutes from './routes/auth.routes.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -13,7 +14,10 @@ const PORT = process.env.PORT || 3001
 // Middleware base
 app.use(helmet())
 app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }))
-app.use(express.json())
+// Render pone un proxy delante: así req.ip es la IP real que llega
+app.set('trust proxy', 1)
+
+app.use(express.json({ limit: '100kb' }))
 
 // Health check — también es el endpoint que el monitor externo pinguea cada pocos
 // minutos para que Render (plan free) no duerma el servicio por inactividad.
@@ -33,6 +37,7 @@ app.get('/api/v1/health', (_req, res) => {
 app.use('/api/v1/products', productsRoutes)
 app.use('/api/v1/categories', categoriesRoutes)
 app.use('/api/v1/departments', departmentsRoutes)
+app.use('/api/v1/auth', authRoutes)
 
 // Manejo de errores (siempre al final)
 app.use(errorHandler)

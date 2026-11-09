@@ -46,7 +46,7 @@ export default function BottomNav() {
   const isHome = pathname === '/'
   const isFavoritos = pathname === '/favoritos'
   const isCarrito = pathname === '/carrito'
-  const isCuenta = pathname === '/cuenta'
+  const isCuenta = ['/cuenta', '/ingresar', '/registro'].some((p) => pathname.startsWith(p))
 
   return (
     <nav

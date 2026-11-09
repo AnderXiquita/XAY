@@ -159,7 +159,7 @@ export default function Header() {
                   0
                 </span>
               </div>
-              <IconButton label="Mi cuenta">
+              <IconButton label="Mi cuenta" href="/cuenta">
                 <UserIcon />
               </IconButton>
               {/* Carrito */}
@@ -611,18 +611,16 @@ function NavLink({ href, children, isActive }: { href: string; children: React.R
   )
 }
 
-function IconButton({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <button
-      aria-label={label}
-      className="p-2 rounded-lg transition-colors cursor-pointer"
-      style={{ minWidth: '44px', minHeight: '44px', color: 'rgba(255, 251, 244, 0.7)' }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--color-text-inverse)')}
-      onMouseLeave={(e) => (e.currentTarget.style.color = 'rgba(255, 251, 244, 0.7)')}
-    >
-      {children}
-    </button>
-  )
+function IconButton({ label, href, children }: { label: string; href?: string; children: React.ReactNode }) {
+  const props = {
+    'aria-label': label,
+    className: 'p-2 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center',
+    style: { minWidth: '44px', minHeight: '44px', color: 'rgba(255, 251, 244, 0.7)' },
+    onMouseEnter: (e: React.MouseEvent<HTMLElement>) => (e.currentTarget.style.color = 'var(--color-text-inverse)'),
+    onMouseLeave: (e: React.MouseEvent<HTMLElement>) => (e.currentTarget.style.color = 'rgba(255, 251, 244, 0.7)'),
+  }
+
+  return href ? <Link href={href} {...props}>{children}</Link> : <button {...props}>{children}</button>
 }
 
 /* ============================================
