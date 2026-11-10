@@ -494,7 +494,7 @@ export default function TiendaPage() {
         {/* FILA SUPERIOR COMPARTIDA — Filtros label (desktop) + toolbar */}
         <div
           className="sticky top-16 z-20 lg:static -mx-4 sm:-mx-10 lg:mx-0 px-4 sm:px-10 lg:px-0 py-3 lg:py-0 mb-3 lg:mb-6 border-b lg:border-b-0 flex gap-10 items-center"
-          style={{ backgroundColor: 'rgba(255, 251, 244, 0.82)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderColor: 'var(--color-border)' }}
+          style={{ backgroundColor: 'rgba(var(--color-bg-rgb), 0.82)', backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)', borderColor: 'var(--color-border)' }}
         >
 
           {/* Título Filtros — mismo ancho que el sidebar, solo desktop */}

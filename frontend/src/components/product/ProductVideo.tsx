@@ -48,7 +48,7 @@ export default function ProductVideo({ media, variant, className = '' }: Product
             : {
                 width: '44px',
                 height: '44px',
-                backgroundColor: 'rgba(255, 251, 244, 0.92)',
+                backgroundColor: 'rgba(var(--color-bg-rgb), 0.92)',
                 color: 'var(--color-text-primary)',
                 boxShadow: 'var(--shadow-sm)',
               }

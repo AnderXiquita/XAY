@@ -4,6 +4,7 @@ import { useActionState } from 'react'
 import { updateProfileAction, type FormState } from '@/app/actions/account'
 import type { User } from '@/lib/api'
 import Field from '@/components/forms/Field'
+import DateField from '@/components/forms/DateField'
 import FormMessage from '@/components/forms/FormMessage'
 import SubmitButton from '@/components/forms/SubmitButton'
 
@@ -38,13 +39,10 @@ export default function ProfileForm({ user }: { user: User }) {
         hint="Para coordinar la entrega de tus pedidos"
       />
 
-      <Field
+      <DateField
         label="Fecha de nacimiento"
         name="birth_date"
-        type="date"
-        autoComplete="bday"
         optional
-        max={new Date().toISOString().slice(0, 10)}
         defaultValue={value('birth_date', user.birth_date?.slice(0, 10) ?? '')}
         error={error('birth_date')}
         hint="Nos ayuda a recomendarte piezas"

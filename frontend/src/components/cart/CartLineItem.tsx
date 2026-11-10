@@ -34,7 +34,8 @@ export default function CartLineItem({ line, onNavigate }: { line: CartLine; onN
             src={image.url}
             alt={image.alt_text ?? product.name}
             fill
-            sizes="88px"
+            // object-cover en un marco vertical: se pide más ancha para que las fotos horizontales no se estiren
+            sizes="200px"
             loading="eager"
             className="object-cover"
             style={{ filter: line.issue ? 'grayscale(1)' : undefined }}

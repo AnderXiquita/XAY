@@ -99,26 +99,8 @@ export default function AboutPage() {
                 className="text-base sm:text-lg leading-relaxed"
                 style={{ color: 'var(--color-text-secondary)', fontFamily: 'var(--font-body)' }}
               >
-                Si cualquier marca de ropa moderna tiene una tienda en línea decente, ¿por qué la ropa típica guatemalteca no? Ese fue el punto de partida. No somos diseñadores de moda — somos dos guatemaltecos que vieron un problema real y decidieron resolverlo con tecnología, diseño y respeto por el trabajo artesanal.
+                Si cualquier marca de ropa moderna tiene una tienda en línea decente, ¿por qué la ropa típica guatemalteca no? Ese fue el punto de partida.
               </p>
-              {/* El nombre XAY — mención sutil, no protagonista */}
-              <div
-                className="mt-4 pt-6 flex items-center gap-4"
-                style={{ borderTop: '1px solid var(--color-border)' }}
-              >
-                <span
-                  className="text-3xl sm:text-4xl font-bold tracking-[0.15em]"
-                  style={{ fontFamily: 'var(--font-display)', color: 'var(--color-text-primary)' }}
-                >
-                  XAY
-                </span>
-                <p
-                  className="text-sm leading-relaxed"
-                  style={{ color: 'var(--color-text-muted)', fontFamily: 'var(--font-body)' }}
-                >
-                  Nuestro nombre nace de la unión de dos apellidos guatemaltecos: <strong style={{ color: 'var(--color-text-secondary)' }}>X</strong>iquita y <strong style={{ color: 'var(--color-text-secondary)' }}>A</strong>jqueja<strong style={{ color: 'var(--color-text-secondary)' }}>y</strong>.
-                </p>
-              </div>
             </div>
           </div>
 

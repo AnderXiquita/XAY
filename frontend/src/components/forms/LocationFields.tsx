@@ -2,7 +2,8 @@
 
 import { useEffect, useId, useState } from 'react'
 import { getMunicipalitiesByDepartment, type Department, type Municipality } from '@/lib/api'
-import { FieldShell, inputClass, selectStyle } from './Field'
+import { FieldShell } from './Field'
+import Dropdown from './Dropdown'
 
 interface LocationFieldsProps {
   departments: Department[]
@@ -45,45 +46,30 @@ export default function LocationFields({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
       <FieldShell id={departmentFieldId} label="Departamento" error={departmentError}>
-        <select
+        <Dropdown
           id={departmentFieldId}
           name="department_id"
           value={departmentId}
-          onChange={(e) => {
-            setDepartmentId(e.target.value)
+          onChange={(next) => {
+            setDepartmentId(next)
             setMunicipalityId('')
           }}
-          aria-invalid={Boolean(departmentError)}
-          className={inputClass(departmentError)}
-          style={selectStyle}
-        >
-          <option value="">Elige uno</option>
-          {departments.map((d) => (
-            <option key={d.id} value={d.id}>
-              {d.name}
-            </option>
-          ))}
-        </select>
+          options={departments.map((d) => ({ value: String(d.id), label: d.name }))}
+          error={departmentError}
+        />
       </FieldShell>
 
       <FieldShell id={municipalityFieldId} label="Municipio" error={municipalityError}>
-        <select
+        <Dropdown
           id={municipalityFieldId}
           name="municipality_id"
           value={municipalityId}
-          onChange={(e) => setMunicipalityId(e.target.value)}
+          onChange={setMunicipalityId}
           disabled={!departmentId || loading}
-          aria-invalid={Boolean(municipalityError)}
-          className={inputClass(municipalityError)}
-          style={selectStyle}
-        >
-          <option value="">{loading ? 'Cargando…' : departmentId ? 'Elige uno' : 'Primero el departamento'}</option>
-          {municipalities.map((m) => (
-            <option key={m.id} value={m.id}>
-              {m.name}
-            </option>
-          ))}
-        </select>
+          placeholder={loading ? 'Cargando…' : departmentId ? 'Elige uno' : 'Primero el departamento'}
+          options={municipalities.map((m) => ({ value: String(m.id), label: m.name }))}
+          error={municipalityError}
+        />
       </FieldShell>
     </div>
   )

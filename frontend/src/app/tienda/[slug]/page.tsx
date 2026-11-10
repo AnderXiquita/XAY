@@ -66,7 +66,7 @@ export default async function ProductPage({ params }: PageProps) {
               style={{
                 width: '36px',
                 height: '36px',
-                backgroundColor: 'rgba(255, 251, 244, 0.9)',
+                backgroundColor: 'rgba(var(--color-bg-rgb), 0.9)',
                 boxShadow: 'var(--shadow-sm)',
                 color: 'var(--color-text-primary)',
               }}

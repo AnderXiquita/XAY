@@ -136,7 +136,7 @@ export default function ProductInfo({ product }: { product: Product }) {
       <div
         className="mobile-action-bar lg:hidden fixed left-0 right-0 z-40 flex items-center gap-3 px-4 border-t"
         style={{
-          backgroundColor: 'rgba(255, 251, 244, 0.94)',
+          backgroundColor: 'rgba(var(--color-bg-rgb), 0.94)',
           backdropFilter: 'blur(10px)',
           WebkitBackdropFilter: 'blur(10px)',
           borderColor: 'var(--color-border)',

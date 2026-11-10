@@ -6,6 +6,7 @@ import { completeProfileAction, type FormState } from '@/app/actions/account'
 import type { Department } from '@/lib/api'
 import AuthShell from '@/components/auth/AuthShell'
 import Field from '@/components/forms/Field'
+import DateField from '@/components/forms/DateField'
 import FormMessage from '@/components/forms/FormMessage'
 import LocationFields from '@/components/forms/LocationFields'
 
@@ -56,16 +57,7 @@ export default function CompleteProfileForm({ departments, next, defaults }: Com
           error={error('phone')}
           hint="Para coordinar la entrega de tus pedidos"
         />
-        <Field
-          label="Fecha de nacimiento"
-          name="birth_date"
-          type="date"
-          autoComplete="bday"
-          optional
-          max={new Date().toISOString().slice(0, 10)}
-          defaultValue={value('birth_date', defaults.birth_date)}
-          error={error('birth_date')}
-        />
+        <DateField label="Fecha de nacimiento" name="birth_date" optional defaultValue={value('birth_date', defaults.birth_date)} error={error('birth_date')} />
 
         <div className="flex items-center gap-4 pt-6">
           <span className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--color-accent)' }}>

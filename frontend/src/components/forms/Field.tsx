@@ -11,17 +11,6 @@ export function inputClass(error?: string) {
 // 16px para que el iPhone no haga zoom al escribir
 export const inputStyle = { minHeight: '48px', fontSize: '16px', color: 'var(--color-text-primary)' }
 
-const chevron = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234A7080' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
-
-export const selectStyle = {
-  ...inputStyle,
-  appearance: 'none' as const,
-  backgroundImage: chevron,
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'right 16px center',
-  paddingRight: '40px',
-}
-
 interface FieldShellProps {
   id: string
   label: string

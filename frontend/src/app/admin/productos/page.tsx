@@ -25,7 +25,7 @@ function Thumb({ product }: { product: AdminProduct }) {
   const image = product.images[0]
   return (
     <div className="relative shrink-0 overflow-hidden" style={{ width: '48px', height: '64px', borderRadius: '4px', backgroundColor: 'var(--color-surface-alt)' }}>
-      {image && <Image src={image.url} alt="" fill sizes="48px" loading="eager" className="object-cover" />}
+      {image && <Image src={image.url} alt="" fill sizes="128px" loading="eager" className="object-cover" />}
     </div>
   )
 }

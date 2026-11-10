@@ -239,7 +239,7 @@ export default function ProductForm({ product, categories, suppliers, department
                 {images.map((img) => (
                   <div key={img.id} className="relative overflow-hidden" style={{ aspectRatio: '3 / 4', borderRadius: '4px', backgroundColor: 'var(--color-surface)' }}>
                     {img.media_type === 'image' ? (
-                      <Image src={img.url} alt="" fill sizes="100px" loading="eager" className="object-cover" />
+                      <Image src={img.url} alt="" fill sizes="200px" loading="eager" className="object-cover" />
                     ) : (
                       <span className="absolute inset-0 flex items-center justify-center text-xs" style={{ color: 'var(--color-text-muted)' }}>
                         Video

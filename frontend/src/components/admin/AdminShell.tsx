@@ -103,14 +103,25 @@ export default function AdminShell({ userName, children }: { userName: string; c
         <span style={{ width: '44px' }} />
       </header>
 
-      {menuOpen && (
-        <div className="lg:hidden fixed inset-0 z-50">
-          <div className="absolute inset-0" onClick={() => setMenuOpen(false)} style={{ backgroundColor: 'rgba(9, 31, 44, 0.45)' }} />
-          <aside className="absolute inset-y-0 left-0 w-[260px]" style={{ ...dark, animation: 'fadeIn 200ms ease' }}>
-            <Sidebar userName={userName} onNavigate={() => setMenuOpen(false)} />
-          </aside>
-        </div>
-      )}
+      {/* siempre montado: así se anima tanto al abrir como al cerrar */}
+      <div className="lg:hidden fixed inset-0 z-50" aria-hidden={!menuOpen} style={{ pointerEvents: menuOpen ? 'auto' : 'none' }}>
+        <div
+          className="absolute inset-0"
+          onClick={() => setMenuOpen(false)}
+          style={{ backgroundColor: 'rgba(9, 31, 44, 0.45)', opacity: menuOpen ? 1 : 0, transition: 'opacity 300ms ease' }}
+        />
+        <aside
+          className="absolute inset-y-0 left-0 w-[260px]"
+          style={{
+            ...dark,
+            transform: menuOpen ? 'translateX(0)' : 'translateX(-100%)',
+            visibility: menuOpen ? 'visible' : 'hidden',
+            transition: 'transform 350ms cubic-bezier(0.4, 0, 0.2, 1), visibility 350ms',
+          }}
+        >
+          <Sidebar userName={userName} onNavigate={() => setMenuOpen(false)} />
+        </aside>
+      </div>
 
       <AdminToastProvider>
         <div className="px-4 sm:px-8 lg:px-10 py-6 lg:py-10 max-w-6xl">{children}</div>

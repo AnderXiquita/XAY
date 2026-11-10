@@ -32,7 +32,7 @@ export default function AuthShell({ eyebrow = 'Mi cuenta', title, subtitle, imag
       <div className="auth-shell flex flex-col lg:grid lg:grid-cols-12 lg:gap-16 lg:items-center max-w-6xl mx-auto">
         {/* la foto toma el alto que sobra para que el login quepa sin scroll */}
         <div className="lg:hidden relative overflow-hidden" style={{ flex: '1 0 var(--auth-hero-min, 170px)', maxHeight: '300px' }}>
-          <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
+          <Image src={image} alt="" fill priority quality={85} sizes="100vw" className="object-cover" />
           <div
             className="absolute inset-0"
             style={{ background: 'linear-gradient(to top, rgba(9, 31, 44, 0.88) 0%, rgba(9, 31, 44, 0.35) 60%, rgba(9, 31, 44, 0.15) 100%)' }}
@@ -69,7 +69,8 @@ export default function AuthShell({ eyebrow = 'Mi cuenta', title, subtitle, imag
           <div className={aside ? 'lg:sticky lg:top-28' : ''}>
             {aside && <div className="mb-6">{aside}</div>}
             <div className="relative overflow-hidden" style={{ borderRadius: 'var(--radius-lg)', aspectRatio: aside ? '1 / 1' : '4 / 5' }}>
-              <Image src={image} alt="" fill sizes="(min-width: 1280px) 560px, 50vw" className="object-cover" />
+              {/* la foto llena un marco vertical o cuadrado (object-cover): se pide más ancha que el marco para que no se estire */}
+              <Image src={image} alt="" fill quality={85} sizes="(min-width: 1024px) 1300px, 100vw" className="object-cover" />
               <div className="absolute inset-0" style={{ background: 'linear-gradient(to top, rgba(9, 31, 44, 0.6), transparent 55%)' }} />
               <p
                 className="absolute left-10 right-10 bottom-10 text-2xl leading-snug italic"
