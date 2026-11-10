@@ -6,12 +6,16 @@ import { getProductsByIdsAction } from '@/app/actions/favorites'
 import type { Product } from '@/lib/api'
 import { useProfileInitial } from '@/lib/useProfileInitial'
 import ProductCard from '@/components/store/ProductCard'
+import { useCart } from '@/components/cart/CartProvider'
+import { useConfirm } from '@/components/ui/ConfirmDialog'
 import { useFavorites } from './FavoritesProvider'
 
 const grid = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6'
 
 export default function FavoritesView() {
-  const { ids, ready } = useFavorites()
+  const { ids, ready, clear } = useFavorites()
+  const { addMany, inCart, busy } = useCart()
+  const [confirm, confirmDialog] = useConfirm()
   const loggedIn = useProfileInitial() !== null
   const [products, setProducts] = useState<Map<string, Product>>(new Map())
   const [requested, setRequested] = useState<Set<string>>(new Set())
@@ -36,9 +40,11 @@ export default function FavoritesView() {
 
   const visible = ids.map((id) => products.get(id)).filter((p): p is Product => Boolean(p))
   const count = visible.length
+  const purchasable = visible.filter((p) => p.status === 'available' && (p.is_traditional || p.quantity > 0) && !inCart(p.id))
 
   return (
     <>
+      {confirmDialog}
       <section className="max-w-screen-2xl mx-auto px-4 sm:px-10 lg:px-[3%] pt-10 pb-7 border-b" style={{ borderColor: 'var(--color-border)' }}>
         <div className="flex items-center gap-4 mb-3">
           <span className="text-xs uppercase tracking-[0.3em]" style={{ color: 'var(--color-accent)' }}>
@@ -50,9 +56,33 @@ export default function FavoritesView() {
           Favoritos
         </h1>
         {!loading && count > 0 && (
-          <p className="mt-2 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-            {count === 1 ? '1 pieza' : `${count} piezas`}
-          </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mt-2">
+            <p className="text-sm" style={{ color: 'var(--color-text-muted)' }}>
+              {count === 1 ? '1 pieza' : `${count} piezas`}
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {purchasable.length > 0 && (
+                <button type="button" disabled={busy === 'many'} onClick={() => addMany(purchasable.map((p) => p.id))} className="btn-pill">
+                  {busy === 'many' ? 'Agregando…' : purchasable.length === count ? 'Agregar todo al carrito' : `Agregar disponibles al carrito (${purchasable.length})`}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={async () => {
+                  const ok = await confirm({
+                    title: '¿Vaciar tus favoritos?',
+                    message: 'Se quitarán todas las piezas que guardaste. Las piezas siguen en la tienda.',
+                    confirmLabel: 'Vaciar favoritos',
+                    danger: true,
+                  })
+                  if (ok) clear()
+                }}
+                className="btn-pill btn-pill-quiet"
+              >
+                Vaciar favoritos
+              </button>
+            </div>
+          </div>
         )}
       </section>
 

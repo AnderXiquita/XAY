@@ -4,6 +4,9 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import BottomNav from '@/components/layout/BottomNav'
 import FavoritesProvider from '@/components/favorites/FavoritesProvider'
+import CartProvider from '@/components/cart/CartProvider'
+import CartDrawer from '@/components/cart/CartDrawer'
+import CartNoticeToast from '@/components/cart/CartNoticeToast'
 import SmoothScroll from '@/components/ui/SmoothScroll'
 import PageTransition from '@/components/ui/PageTransition'
 import './globals.css'
@@ -66,12 +69,16 @@ export default function RootLayout({
       >
         <SmoothScroll />
         <FavoritesProvider>
-          <Header />
-          <main className="flex-1 pb-16 lg:pb-0">
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <Footer />
-          <BottomNav />
+          <CartProvider>
+            <Header />
+            <main className="flex-1 pb-16 lg:pb-0">
+              <PageTransition>{children}</PageTransition>
+            </main>
+            <Footer />
+            <BottomNav />
+            <CartDrawer />
+            <CartNoticeToast />
+          </CartProvider>
         </FavoritesProvider>
       </body>
     </html>

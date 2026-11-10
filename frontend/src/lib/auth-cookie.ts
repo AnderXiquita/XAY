@@ -13,3 +13,7 @@ export const PROFILE_COOKIE = 'xay_profile'
 export function initialOf(name: string) {
   return (Array.from(name.trim())[0] ?? '').toLocaleUpperCase('es')
 }
+
+// id del carrito de invitado (httpOnly); al iniciar sesión se une al carrito de la cuenta y se borra
+export const CART_COOKIE = 'xay_cart'
+export const CART_MAX_AGE = 60 * 60 * 24 * 30

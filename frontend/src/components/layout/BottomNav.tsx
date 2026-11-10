@@ -5,11 +5,13 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 import { useProfileInitial } from '@/lib/useProfileInitial'
 import { useFavorites } from '@/components/favorites/FavoritesProvider'
+import { useCart } from '@/components/cart/CartProvider'
 
 export default function BottomNav() {
   const pathname = usePathname()
   const initial = useProfileInitial()
   const favoritesCount = useFavorites().ids.length
+  const cartCount = useCart().cart.count
   const [visible, setVisible] = useState(true)
   const lastScrollY = useRef(0)
   const ticking = useRef(false)
@@ -72,7 +74,7 @@ export default function BottomNav() {
         <NavItem href="/favoritos" isActive={isFavoritos} badge={favoritesCount}>
           <HeartIcon active={isFavoritos} />
         </NavItem>
-        <NavItem href="/carrito" isActive={isCarrito} badge={0}>
+        <NavItem href="/carrito" isActive={isCarrito} badge={cartCount}>
           <CartIcon active={isCarrito} />
         </NavItem>
         <NavItem href="/cuenta" isActive={isCuenta} badge={undefined}>

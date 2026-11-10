@@ -340,7 +340,11 @@ model CartItem {
   product    Product  @relation(fields: [product_id], references: [id])
   quantity   Int      @default(1)
   created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
+  // el carrito es temporal: sus líneas sí se borran (excepción a la regla de soft delete)
+  @@unique([user_id, product_id])
+  @@unique([session_id, product_id])
   @@map("cart_items")
 }
 

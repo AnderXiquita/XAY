@@ -1,6 +1,8 @@
 'use client'
 
 import Link from 'next/link'
+import { useRef } from 'react'
+import { useConfirm } from '@/components/ui/ConfirmDialog'
 import { deleteAddressAction, setDefaultAddressAction } from '@/app/actions/account'
 import type { Address } from '@/lib/api'
 import { formatAddress } from '@/lib/format'
@@ -8,6 +10,19 @@ import { formatAddress } from '@/lib/format'
 const actionStyle = { minHeight: '44px', fontSize: '0.85rem', color: 'var(--color-text-primary)' }
 
 export default function AddressCard({ address }: { address: Address }) {
+  const [confirm, confirmDialog] = useConfirm()
+  const deleteForm = useRef<HTMLFormElement>(null)
+
+  async function askDelete() {
+    const ok = await confirm({
+      title: '¿Eliminar esta dirección?',
+      message: `"${address.label}" ya no aparecerá al hacer un pedido. Los pedidos anteriores no cambian.`,
+      confirmLabel: 'Eliminar',
+      danger: true,
+    })
+    if (ok) deleteForm.current?.requestSubmit()
+  }
+
   return (
     <article className="rounded-2xl border p-6" style={{ borderColor: address.is_default ? 'var(--color-accent)' : 'var(--color-border)' }}>
       <div className="flex items-center gap-3 mb-3">
@@ -42,18 +57,14 @@ export default function AddressCard({ address }: { address: Address }) {
             </button>
           </form>
         )}
-        <form
-          action={deleteAddressAction}
-          onSubmit={(e) => {
-            if (!window.confirm(`¿Eliminar la dirección "${address.label}"?`)) e.preventDefault()
-          }}
-        >
+        <form ref={deleteForm} action={deleteAddressAction}>
           <input type="hidden" name="id" value={address.id} />
-          <button type="submit" style={{ ...actionStyle, color: 'var(--color-error)' }}>
+          <button type="button" onClick={askDelete} style={{ ...actionStyle, color: 'var(--color-error)' }}>
             Eliminar
           </button>
         </form>
       </div>
+      {confirmDialog}
     </article>
   )
 }

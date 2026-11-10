@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import type { Product } from '@/lib/api'
+import Link from 'next/link'
 import { useFavorites } from '@/components/favorites/FavoritesProvider'
+import { useCart } from '@/components/cart/CartProvider'
 import { formatCm, formatPrice } from '@/lib/format'
 
 const EMBROIDERY_LABELS: Record<NonNullable<Product['embroidery_type']>, string> = {
@@ -209,14 +211,53 @@ function PrimaryAction({ product }: { product: Product }) {
     )
   }
 
+  if (!product.is_traditional && product.quantity < 1) {
+    return (
+      <button type="button" disabled className={`${base} cursor-not-allowed`} style={{ ...style, color: 'var(--color-text-muted)', backgroundColor: 'var(--color-surface-alt)' }}>
+        Agotado
+      </button>
+    )
+  }
+
+  return <AddToCartButton product={product} base={base} style={style} />
+}
+
+function AddToCartButton({ product, base, style }: { product: Product; base: string; style: React.CSSProperties }) {
+  const { add, inCart, busy, openDrawer } = useCart()
+  const adding = busy === product.id
+
+  // las piezas típicas son únicas: si ya está en el carrito no se vuelve a agregar
+  if (inCart(product.id) && product.is_traditional) {
+    return (
+      <>
+        <button
+          type="button"
+          onClick={openDrawer}
+          className={`${base} hidden lg:flex border border-[var(--color-accent)] text-[var(--color-accent)] hover:bg-[var(--color-accent)] hover:text-[var(--color-text-inverse)]`}
+          style={style}
+        >
+          En tu carrito · Ver
+        </button>
+        <Link
+          href="/carrito"
+          className={`${base} lg:hidden border border-[var(--color-accent)] text-[var(--color-accent)]`}
+          style={style}
+        >
+          En tu carrito · Ver
+        </Link>
+      </>
+    )
+  }
+
   return (
     <button
       type="button"
-      // TODO: carrito (bloque 7)
-      className={`${base} bg-[var(--color-accent)] text-[var(--color-text-inverse)] hover:bg-[var(--color-accent-light)]`}
+      disabled={adding}
+      onClick={() => add(product.id, product.name)}
+      className={`${base} bg-[var(--color-accent)] text-[var(--color-text-inverse)] hover:bg-[var(--color-accent-light)] disabled:opacity-70 disabled:cursor-wait`}
       style={style}
     >
-      Agregar al carrito
+      {adding ? 'Agregando…' : 'Agregar al carrito'}
     </button>
   )
 }

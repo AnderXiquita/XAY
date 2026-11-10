@@ -2,8 +2,8 @@
 
 import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { loginRequest, registerRequest, type AuthResult } from '@/lib/api'
-import { PROFILE_COOKIE, SESSION_COOKIE, SESSION_MAX_AGE, initialOf, safeNext } from '@/lib/auth-cookie'
+import { loginRequest, mergeCartRequest, registerRequest, type AuthResult } from '@/lib/api'
+import { CART_COOKIE, PROFILE_COOKIE, SESSION_COOKIE, SESSION_MAX_AGE, initialOf, safeNext } from '@/lib/auth-cookie'
 
 export interface AuthFormState {
   error?: string
@@ -26,6 +26,13 @@ async function finish(result: AuthResult, next: string, values: AuthFormState['v
   const options = { secure: process.env.NODE_ENV === 'production', sameSite: 'lax' as const, path: '/', maxAge: SESSION_MAX_AGE }
   store.set(SESSION_COOKIE, result.token, { ...options, httpOnly: true })
   store.set(PROFILE_COOKIE, initialOf(result.user.name), options)
+
+  // lo que agregó al carrito como invitado pasa a su cuenta
+  const guestCart = store.get(CART_COOKIE)?.value
+  if (guestCart) {
+    const merged = await mergeCartRequest(result.token, guestCart)
+    if (merged.ok) store.delete(CART_COOKIE)
+  }
 
   redirect(next)
 }

@@ -12,6 +12,7 @@ interface FavoritesContextValue {
   ready: boolean
   isFavorite: (productId: string) => boolean
   toggle: (productId: string) => void
+  clear: () => void
 }
 
 const FavoritesContext = createContext<FavoritesContextValue | null>(null)
@@ -87,9 +88,19 @@ export default function FavoritesProvider({ children }: { children: React.ReactN
     [update],
   )
 
+  const clear = useCallback(() => {
+    const prev = idsRef.current
+    update([])
+    if (!loggedIn.current) {
+      writeLocal([])
+      return
+    }
+    Promise.all(prev.map((id) => setFavoriteAction(id, false)))
+  }, [update])
+
   const isFavorite = useCallback((productId: string) => ids.includes(productId), [ids])
 
-  return <FavoritesContext.Provider value={{ ids, ready, isFavorite, toggle }}>{children}</FavoritesContext.Provider>
+  return <FavoritesContext.Provider value={{ ids, ready, isFavorite, toggle, clear }}>{children}</FavoritesContext.Provider>
 }
 
 export function useFavorites() {

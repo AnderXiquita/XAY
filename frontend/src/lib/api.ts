@@ -49,6 +49,7 @@ export interface Product {
   is_traditional: boolean
   is_featured: boolean
   allow_similar_request: boolean
+  quantity: number      // stock; solo cuenta para complementos modernos
   width_cm: string | null
   length_cm: string | null
   size_label: string | null
@@ -334,3 +335,61 @@ export const removeFavoriteRequest = (token: string, productId: string) =>
 
 export const mergeFavoritesRequest = (token: string, productIds: string[]) =>
   authed<string[]>(token, '/favorites/merge', { method: 'POST', body: { product_ids: productIds } })
+
+// ============================================
+// CARRITO (con sesión usa el token; como invitado, el id de carrito de la cookie)
+// ============================================
+
+export interface CartLine {
+  product_id: string
+  quantity: number
+  max_quantity: number
+  issue: 'sold' | 'unavailable' | 'out_of_stock' | null
+  product: Product
+}
+
+export interface Cart {
+  items: CartLine[]
+  count: number
+  subtotal: string
+}
+
+export const EMPTY_CART: Cart = { items: [], count: 0, subtotal: '0.00' }
+
+export interface CartAuth {
+  token?: string | null | undefined
+  session?: string | null | undefined
+}
+
+async function cartRequest(auth: CartAuth, path: string, init: { method?: string; body?: unknown } = {}): Promise<ApiResult<Cart>> {
+  try {
+    const res = await fetch(`${BASE_URL}/api/v1/cart${path}`, {
+      method: init.method ?? 'GET',
+      headers: {
+        ...(auth.token && { Authorization: `Bearer ${auth.token}` }),
+        ...(auth.session && { 'X-Cart-Session': auth.session }),
+        ...(init.body !== undefined && { 'Content-Type': 'application/json' }),
+      },
+      ...(init.body !== undefined && { body: JSON.stringify(init.body) }),
+      cache: 'no-store',
+    })
+    const json = await res.json()
+    if (!res.ok) return { ok: false, status: res.status, error: json as ApiError }
+    return { ok: true, data: (json as { data: Cart }).data }
+  } catch {
+    return { ok: false, status: 0, error: { error: 'No pudimos conectar con el servidor. Inténtalo de nuevo.', code: 'NETWORK_ERROR' } }
+  }
+}
+
+export const getCartRequest = (auth: CartAuth) => cartRequest(auth, '')
+
+export const addCartItemRequest = (auth: CartAuth, productId: string, quantity = 1) =>
+  cartRequest(auth, '/items', { method: 'POST', body: { product_id: productId, quantity } })
+
+export const updateCartItemRequest = (auth: CartAuth, productId: string, quantity: number) =>
+  cartRequest(auth, `/items/${encodeURIComponent(productId)}`, { method: 'PATCH', body: { quantity } })
+
+export const removeCartItemRequest = (auth: CartAuth, productId: string) =>
+  cartRequest(auth, `/items/${encodeURIComponent(productId)}`, { method: 'DELETE' })
+
+export const mergeCartRequest = (token: string, session: string) => cartRequest({ token, session }, '/merge', { method: 'POST' })

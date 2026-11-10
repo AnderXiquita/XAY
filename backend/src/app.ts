@@ -9,6 +9,7 @@ import departmentsRoutes from './routes/departments.routes.js'
 import authRoutes from './routes/auth.routes.js'
 import usersRoutes from './routes/users.routes.js'
 import favoritesRoutes from './routes/favorites.routes.js'
+import cartRoutes from './routes/cart.routes.js'
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -42,6 +43,7 @@ app.use('/api/v1/departments', departmentsRoutes)
 app.use('/api/v1/auth', authRoutes)
 app.use('/api/v1/users', usersRoutes)
 app.use('/api/v1/favorites', favoritesRoutes)
+app.use('/api/v1/cart', cartRoutes)
 
 // Manejo de errores (siempre al final)
 app.use(errorHandler)

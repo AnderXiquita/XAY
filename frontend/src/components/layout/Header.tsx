@@ -5,11 +5,13 @@ import { usePathname } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { useProfileInitial } from '@/lib/useProfileInitial'
 import { useFavorites } from '@/components/favorites/FavoritesProvider'
+import { useCart } from '@/components/cart/CartProvider'
 
 export default function Header() {
   const pathname = usePathname()
   const initial = useProfileInitial()
   const favoritesCount = useFavorites().ids.length
+  const { cart, openDrawer } = useCart()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isSubmenuOpen, setIsSubmenuOpen] = useState(false)
   const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -180,25 +182,28 @@ export default function Header() {
               </IconButton>
               {/* Carrito */}
               <div className="relative">
-                <IconButton label="Carrito">
+                <IconButton label="Carrito" onClick={openDrawer}>
                   <CartIcon />
                 </IconButton>
-                <span
-                  className="absolute flex items-center justify-center rounded-full pointer-events-none"
-                  style={{
-                    top: '4px',
-                    right: '4px',
-                    width: '16px',
-                    height: '16px',
-                    backgroundColor: 'var(--color-accent)',
-                    color: 'var(--color-text-inverse)',
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '10px',
-                    fontWeight: 500,
-                  }}
-                >
-                  0
-                </span>
+                {cart.count > 0 && (
+                  <span
+                    className="absolute flex items-center justify-center rounded-full pointer-events-none"
+                    style={{
+                      top: '4px',
+                      right: '4px',
+                      minWidth: '16px',
+                      height: '16px',
+                      padding: '0 3px',
+                      backgroundColor: 'var(--color-text-inverse)',
+                      color: 'var(--color-text-primary)',
+                      fontFamily: 'var(--font-body)',
+                      fontSize: '10px',
+                      fontWeight: 600,
+                    }}
+                  >
+                    {cart.count > 9 ? '9+' : cart.count}
+                  </span>
+                )}
               </div>
             </div>
 
@@ -627,9 +632,10 @@ function NavLink({ href, children, isActive }: { href: string; children: React.R
   )
 }
 
-function IconButton({ label, href, children }: { label: string; href?: string; children: React.ReactNode }) {
+function IconButton({ label, href, onClick, children }: { label: string; href?: string; onClick?: () => void; children: React.ReactNode }) {
   const props = {
     'aria-label': label,
+    onClick,
     className: 'p-2 rounded-lg transition-colors cursor-pointer inline-flex items-center justify-center',
     style: { minWidth: '44px', minHeight: '44px', color: 'rgba(255, 251, 244, 0.7)' },
     onMouseEnter: (e: React.MouseEvent<HTMLElement>) => (e.currentTarget.style.color = 'var(--color-text-inverse)'),

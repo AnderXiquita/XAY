@@ -293,6 +293,17 @@ html[data-bottom-nav='hidden'] .mobile-action-bar {
   color: var(--color-text-primary);
 }
 
+/* acción que borra algo */
+.btn-pill-danger {
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.btn-pill-danger:hover:not(:disabled) {
+  background-color: var(--color-error);
+  color: var(--color-text-inverse);
+}
+
 /* login, registro y bienvenida en mobile: sin footer y del alto del teléfono (header 64 + borde + barra inferior 64) */
 @media (max-width: 1023px) {
   body:has([data-auth-page]) footer {
