@@ -2,7 +2,7 @@
 
 import { useEffect, useId, useState } from 'react'
 import { getMunicipalitiesByDepartment, type Department, type Municipality } from '@/lib/api'
-import { FieldShell, inputClass, inputStyle } from './Field'
+import { FieldShell, inputClass, selectStyle } from './Field'
 
 interface LocationFieldsProps {
   departments: Department[]
@@ -10,17 +10,6 @@ interface LocationFieldsProps {
   defaultMunicipalityId?: string | undefined
   departmentError?: string | undefined
   municipalityError?: string | undefined
-}
-
-const chevron = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234A7080' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
-
-const selectStyle = {
-  ...inputStyle,
-  appearance: 'none' as const,
-  backgroundImage: chevron,
-  backgroundRepeat: 'no-repeat',
-  backgroundPosition: 'right 16px center',
-  paddingRight: '40px',
 }
 
 export default function LocationFields({
@@ -34,26 +23,19 @@ export default function LocationFields({
   const municipalityFieldId = useId()
   const [departmentId, setDepartmentId] = useState(defaultDepartmentId)
   const [municipalityId, setMunicipalityId] = useState(defaultMunicipalityId)
-  const [municipalities, setMunicipalities] = useState<Municipality[]>([])
-  const [loading, setLoading] = useState(false)
+  // los municipios se guardan junto al departamento al que pertenecen; si no coinciden, aún están cargando
+  const [loaded, setLoaded] = useState<{ departmentId: string; list: Municipality[] }>({ departmentId: '', list: [] })
+  const loading = departmentId !== '' && loaded.departmentId !== departmentId
+  const municipalities = loaded.departmentId === departmentId ? loaded.list : []
 
   useEffect(() => {
     const department = departments.find((d) => String(d.id) === departmentId)
-    if (!department) {
-      setMunicipalities([])
-      return
-    }
+    if (!department) return
     let cancelled = false
-    setLoading(true)
     getMunicipalitiesByDepartment(department.slug)
+      .catch(() => [])
       .then((list) => {
-        if (!cancelled) setMunicipalities(list)
-      })
-      .catch(() => {
-        if (!cancelled) setMunicipalities([])
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false)
+        if (!cancelled) setLoaded({ departmentId, list })
       })
     return () => {
       cancelled = true

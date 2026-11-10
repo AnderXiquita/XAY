@@ -55,6 +55,24 @@ export default async function AccountPage() {
 
   return (
     <div className="space-y-5">
+      {user.role === 'admin' && (
+        <Link
+          href="/admin"
+          className="flex items-center justify-between gap-4 rounded-2xl p-6 transition-opacity hover:opacity-90"
+          style={{ backgroundColor: 'var(--color-text-primary)', color: 'var(--color-text-inverse)' }}
+        >
+          <span>
+            <span className="block text-xs uppercase tracking-[0.2em] mb-1" style={{ color: 'rgba(255, 251, 244, 0.6)' }}>
+              Administrador
+            </span>
+            <span className="block" style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem' }}>
+              Panel de administración
+            </span>
+          </span>
+          <span aria-hidden="true" className="text-xl">→</span>
+        </Link>
+      )}
+
       {incomplete && (
         <div
           className="flex flex-col sm:flex-row sm:items-center gap-4 rounded-2xl p-6"

@@ -263,7 +263,8 @@ export interface Address {
 
 export type ApiResult<T> = { ok: true; data: T } | { ok: false; status: number; error: ApiError }
 
-async function authed<T>(token: string, path: string, init: { method?: string; body?: unknown } = {}): Promise<ApiResult<T>> {
+// raw: devuelve el JSON completo (para listas paginadas que traen total, page, etc.)
+async function authed<T>(token: string, path: string, init: { method?: string; body?: unknown; raw?: boolean } = {}): Promise<ApiResult<T>> {
   try {
     const res = await fetch(`${BASE_URL}/api/v1${path}`, {
       method: init.method ?? 'GET',
@@ -277,7 +278,7 @@ async function authed<T>(token: string, path: string, init: { method?: string; b
     if (res.status === 204) return { ok: true, data: undefined as T }
     const json = await res.json()
     if (!res.ok) return { ok: false, status: res.status, error: json as ApiError }
-    return { ok: true, data: (json as { data: T }).data }
+    return { ok: true, data: init.raw ? (json as T) : (json as { data: T }).data }
   } catch {
     return { ok: false, status: 0, error: { error: 'No pudimos conectar con el servidor. Inténtalo de nuevo.', code: 'NETWORK_ERROR' } }
   }
@@ -393,3 +394,100 @@ export const removeCartItemRequest = (auth: CartAuth, productId: string) =>
   cartRequest(auth, `/items/${encodeURIComponent(productId)}`, { method: 'DELETE' })
 
 export const mergeCartRequest = (token: string, session: string) => cartRequest({ token, session }, '/merge', { method: 'POST' })
+
+// ============================================
+// PANEL DE ADMINISTRADOR (requiere token de un admin)
+// ============================================
+
+export type ProductStatus = Product['status']
+
+export interface AdminStats {
+  products: Record<ProductStatus, number>
+  featured: number
+  maxFeatured: number
+  users: number
+  categories: number
+}
+
+export interface AdminProduct extends Product {
+  category_id: number
+  municipality_id: number | null
+  supplier_id: number | null
+  supplier: { id: number; name: string } | null
+}
+
+export interface Paginated<T> {
+  data: T[]
+  total: number
+  page: number
+  limit: number
+  totalPages: number
+}
+
+export interface AdminCategory {
+  id: number
+  name: string
+  slug: string
+  description: string | null
+  is_active: boolean
+  _count: { products: number }
+}
+
+export interface AdminSupplier {
+  id: number
+  name: string
+  contact_name: string | null
+  email: string | null
+  phone: string | null
+  notes: string | null
+  is_active: boolean
+  _count: { products: number }
+}
+
+export interface AdminUser {
+  id: string
+  email: string
+  name: string
+  phone: string | null
+  role: User['role']
+  is_active: boolean
+  created_at: string
+  _count: { addresses: number; orders: number; favorites: number }
+}
+
+export type AdminProductInput = Record<string, unknown>
+
+const qs = (params: Record<string, string | number | undefined>) => {
+  const search = new URLSearchParams()
+  for (const [k, v] of Object.entries(params)) if (v !== undefined && v !== '') search.set(k, String(v))
+  const text = search.toString()
+  return text ? `?${text}` : ''
+}
+
+export const getAdminStats = (token: string) => authed<AdminStats>(token, '/admin/stats')
+
+export const getAdminProducts = (token: string, params: { search?: string; status?: string; category?: string; page?: number }) =>
+  authed<Paginated<AdminProduct>>(token, `/admin/products${qs(params)}`, { raw: true })
+
+export const getAdminProduct = (token: string, id: string) => authed<AdminProduct>(token, `/admin/products/${encodeURIComponent(id)}`)
+
+export const saveAdminProduct = (token: string, id: string | null, body: AdminProductInput) =>
+  id
+    ? authed<AdminProduct>(token, `/admin/products/${encodeURIComponent(id)}`, { method: 'PUT', body })
+    : authed<AdminProduct>(token, '/admin/products', { method: 'POST', body })
+
+export const getAdminCategories = (token: string) => authed<AdminCategory[]>(token, '/admin/categories')
+
+export const saveAdminCategory = (token: string, id: number | null, body: Record<string, unknown>) =>
+  id ? authed<AdminCategory>(token, `/admin/categories/${id}`, { method: 'PUT', body }) : authed<AdminCategory>(token, '/admin/categories', { method: 'POST', body })
+
+export const getAdminSuppliers = (token: string) => authed<AdminSupplier[]>(token, '/admin/suppliers')
+
+export const saveAdminSupplier = (token: string, id: number | null, body: Record<string, unknown>) =>
+  id ? authed<AdminSupplier>(token, `/admin/suppliers/${id}`, { method: 'PUT', body }) : authed<AdminSupplier>(token, '/admin/suppliers', { method: 'POST', body })
+
+export const getAdminUsers = (token: string, params: { search?: string; page?: number }) =>
+  authed<Paginated<AdminUser>>(token, `/admin/users${qs(params)}`, { raw: true })
+
+export const setAdminUserActive = (token: string, id: string, isActive: boolean) =>
+  authed<AdminUser>(token, `/admin/users/${encodeURIComponent(id)}`, { method: 'PATCH', body: { is_active: isActive } })

@@ -33,7 +33,7 @@ export default function CartView() {
           <div className="space-y-5 max-w-2xl">
             {Array.from({ length: 2 }).map((_, i) => (
               <div key={i} className="flex gap-4">
-                <div className="rounded-lg shrink-0" style={{ width: '88px', aspectRatio: '3 / 4', backgroundColor: 'var(--color-surface)' }} />
+                <div className="rounded-[4px] shrink-0" style={{ width: '88px', aspectRatio: '3 / 4', backgroundColor: 'var(--color-surface)' }} />
                 <div className="flex-1 space-y-2 pt-2">
                   <div className="h-3 w-1/3 rounded" style={{ backgroundColor: 'var(--color-surface)' }} />
                   <div className="h-4 w-2/3 rounded" style={{ backgroundColor: 'var(--color-surface)' }} />

@@ -66,3 +66,9 @@ export async function getMe(userId: string) {
 
   return user
 }
+
+// el rol se revisa en la BD y no solo en el token: si se le quita el admin a alguien, pierde el acceso al instante
+export async function isActiveAdmin(userId: string) {
+  const user = await prisma.user.findFirst({ where: { id: userId, is_active: true }, select: { role: true } })
+  return user?.role === 'admin'
+}

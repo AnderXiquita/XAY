@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import { verifyToken } from '../lib/jwt.js'
 import { AppError } from '../lib/AppError.js'
+import { isActiveAdmin } from '../services/auth.service.js'
 
 export function authenticate(req: Request, _res: Response, next: NextFunction) {
   const header = req.headers.authorization
@@ -17,8 +18,8 @@ export function authenticate(req: Request, _res: Response, next: NextFunction) {
   next()
 }
 
-export function requireAdmin(req: Request, _res: Response, next: NextFunction) {
-  if (req.user?.role !== 'admin') {
+export async function requireAdmin(req: Request, _res: Response, next: NextFunction) {
+  if (!req.user || req.user.role !== 'admin' || !(await isActiveAdmin(req.user.userId))) {
     throw new AppError('Acceso denegado', 403, 'FORBIDDEN')
   }
   next()

@@ -26,7 +26,7 @@ export default function CartLineItem({ line, onNavigate }: { line: CartLine; onN
       <Link
         href={`/tienda/${product.slug}`}
         onClick={onNavigate}
-        className="relative shrink-0 overflow-hidden rounded-lg"
+        className="relative shrink-0 overflow-hidden rounded-[4px]"
         style={{ width: '88px', aspectRatio: '3 / 4', backgroundColor: 'var(--color-surface)' }}
       >
         {image && (

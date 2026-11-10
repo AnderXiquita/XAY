@@ -3,6 +3,7 @@ import { Playfair_Display, DM_Sans } from 'next/font/google'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import BottomNav from '@/components/layout/BottomNav'
+import StoreOnly from '@/components/layout/StoreOnly'
 import FavoritesProvider from '@/components/favorites/FavoritesProvider'
 import CartProvider from '@/components/cart/CartProvider'
 import CartDrawer from '@/components/cart/CartDrawer'
@@ -70,14 +71,18 @@ export default function RootLayout({
         <SmoothScroll />
         <FavoritesProvider>
           <CartProvider>
-            <Header />
+            <StoreOnly>
+              <Header />
+            </StoreOnly>
             <main className="flex-1 pb-16 lg:pb-0">
               <PageTransition>{children}</PageTransition>
             </main>
-            <Footer />
-            <BottomNav />
-            <CartDrawer />
-            <CartNoticeToast />
+            <StoreOnly>
+              <Footer />
+              <BottomNav />
+              <CartDrawer />
+              <CartNoticeToast />
+            </StoreOnly>
           </CartProvider>
         </FavoritesProvider>
       </body>

@@ -11,6 +11,17 @@ export function inputClass(error?: string) {
 // 16px para que el iPhone no haga zoom al escribir
 export const inputStyle = { minHeight: '48px', fontSize: '16px', color: 'var(--color-text-primary)' }
 
+const chevron = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234A7080' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")`
+
+export const selectStyle = {
+  ...inputStyle,
+  appearance: 'none' as const,
+  backgroundImage: chevron,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: 'right 16px center',
+  paddingRight: '40px',
+}
+
 interface FieldShellProps {
   id: string
   label: string
@@ -44,7 +55,9 @@ export function FieldShell({ id, label, optional, error, hint, children }: Field
 interface FieldProps {
   label: string
   name: string
-  type?: 'text' | 'email' | 'password' | 'tel' | 'date'
+  type?: 'text' | 'email' | 'password' | 'tel' | 'date' | 'number'
+  step?: string
+  rows?: number
   multiline?: boolean
   autoComplete?: string
   placeholder?: string
@@ -55,7 +68,7 @@ interface FieldProps {
   max?: string
 }
 
-export default function Field({ label, name, type = 'text', multiline, autoComplete, placeholder, defaultValue, error, hint, optional, max }: FieldProps) {
+export default function Field({ label, name, type = 'text', step, rows = 3, multiline, autoComplete, placeholder, defaultValue, error, hint, optional, max }: FieldProps) {
   const id = useId()
   const [visible, setVisible] = useState(false)
   const isPassword = type === 'password'
@@ -74,13 +87,15 @@ export default function Field({ label, name, type = 'text', multiline, autoCompl
     <FieldShell id={id} label={label} optional={optional} error={error} hint={hint}>
       <div className="relative">
         {multiline ? (
-          <textarea {...common} rows={3} className={`${inputClass(error)} py-3 resize-none`} style={inputStyle} />
+          <textarea {...common} rows={rows} className={`${inputClass(error)} py-3 ${rows > 3 ? 'resize-y' : 'resize-none'}`} style={inputStyle} />
         ) : (
           <input
             {...common}
             type={isPassword && visible ? 'text' : type}
             max={max}
-            inputMode={type === 'email' ? 'email' : type === 'tel' ? 'tel' : undefined}
+            step={step}
+            min={type === 'number' ? '0' : undefined}
+            inputMode={type === 'email' ? 'email' : type === 'tel' ? 'tel' : type === 'number' ? 'decimal' : undefined}
             autoCapitalize={type === 'text' ? 'sentences' : 'none'}
             spellCheck={false}
             className={`${inputClass(error)} ${isPassword ? 'pr-12' : ''}`}

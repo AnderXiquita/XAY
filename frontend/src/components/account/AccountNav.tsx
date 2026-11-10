@@ -47,7 +47,7 @@ export function AccountHeader({ firstName }: { firstName: string }) {
   )
 }
 
-export function AccountSidebar() {
+export function AccountSidebar({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname()
 
   return (
@@ -72,6 +72,16 @@ export function AccountSidebar() {
           </Link>
         )
       })}
+      {isAdmin && (
+        <Link
+          href="/admin"
+          className="flex items-center justify-between rounded-lg px-4 mt-4 transition-colors duration-200"
+          style={{ minHeight: '44px', fontSize: '0.92rem', backgroundColor: 'var(--color-text-primary)', color: 'var(--color-text-inverse)' }}
+        >
+          Panel de administración
+          <span aria-hidden="true">→</span>
+        </Link>
+      )}
       <form action={logoutAction} className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--color-border)' }}>
         <button
           type="submit"
